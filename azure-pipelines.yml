@@ -10,3 +10,10 @@ steps:
 
 - script: npm run build
   displayName: 'npm run build'
+
+- task: NpmAuthenticate@0
+  inputs:
+    workingFile: .npmrc
+
+- script: npm publish --registry https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/
+  displayName: 'Publish to Azure DevOps npm registry'
