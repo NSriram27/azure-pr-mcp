@@ -9,44 +9,31 @@ A Model Context Protocol server for ALI development workflows (MCAT, Snyk, Unit 
 - Node.js 18.0.0 or higher
 - npm (comes with Node.js)
 
-**Installation Steps for Node.js:**
+## Installation Steps
 
 1. Download Node.js from the official website: [https://nodejs.org/](https://nodejs.org/)
 2. Run the installer and follow the instructions.
 3. Verify installation:
 
-```bash
-  node -v
-  npm -v
-```
+   ```bash
+   node -v
+   npm -v
+   ```
 
-**Register and Authenticate to npm Registry:**
+## npm Registry Configuration
 
-1. Create or edit a `.npmrc` file in your project root.
-2. Add your registry URL and authentication settings, for example:
+- By default, the project uses the public npm registry. If you need to use a private Azure DevOps feed for specific packages, add a scoped registry to your `.npmrc`:
 
-```
-  registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/ 
-  always-auth=true
-```
+  ```properties
+  registry=https://registry.npmjs.org/
+  # @your-scope:registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/
+  ```
 
-3. Install vsts-npm-auth globally:
+- Remove `always-auth=true` unless you specifically need it for private feeds.
 
-```bash
-  npm install -g vsts-npm-auth
-```
+## Azure DevOps Pipeline
 
-4. Authenticate using a tool like `vsts-npm-auth` (for Azure DevOps):
-
-```bash
-  vsts-npm-auth -config .npmrc
-```
-
-5. Verify authentication by running:
-
-```bash
-  npm whoami --registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/
-```
+- The project includes an `azure-pipelines.yml` for CI/CD. It installs dependencies, builds the project, and can be extended for testing and deployment.
 
 ## Project Structure
 
@@ -78,21 +65,21 @@ ali-dev-mcp-nodejs/
 1. Clone the repository
 2. Install dependencies:
 
-```bash
-  npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. Build:
 
-```bash
-  npm run build
-```
+   ```bash
+   npm run build
+   ```
 
 4. Run in dev mode:
 
-```bash
-  npm run dev
-```
+   ```bash
+   npm run dev
+   ```
 
 ### Add a New MCP Provider
 
