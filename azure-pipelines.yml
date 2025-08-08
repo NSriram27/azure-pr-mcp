@@ -11,6 +11,9 @@ steps:
 - script: npm run build
   displayName: 'npm run build'
 
+- script: echo "registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/\nalways-auth=true" > .npmrc
+  displayName: 'Create .npmrc for Azure DevOps registry'
+
 - task: NpmAuthenticate@0
   inputs:
     workingFile: .npmrc
