@@ -17,6 +17,7 @@ steps:
 - task: NpmAuthenticate@0
   inputs:
     workingFile: .npmrc
+  displayName: 'Authenticate with Azure DevOps npm registry'
 
 - script: npm publish --registry https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/
   displayName: 'Publish to Azure DevOps npm registry'
