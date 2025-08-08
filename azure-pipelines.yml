@@ -14,6 +14,12 @@ steps:
 - script: echo "registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/\nalways-auth=true" > .npmrc
   displayName: 'Create .npmrc for Azure DevOps registry'
 
+- script: npm install -g vsts-npm-auth
+  displayName: 'Install vsts-npm-auth'
+
+- script: vsts-npm-auth -config .npmrc
+  displayName: 'Authenticate npm registry using vsts-npm-auth'
+
 - task: NpmAuthenticate@0
   inputs:
     workingFile: .npmrc
