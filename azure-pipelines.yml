@@ -1,0 +1,16 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NpmAuthenticate@0
+  inputs:
+    workingFile: .npmrc
+
+- script: npm install
+  displayName: 'npm install'
+
+- script: npm run build
+  displayName: 'npm run build'
