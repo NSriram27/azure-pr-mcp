@@ -28,7 +28,8 @@ export class SnykMCP extends BaseMCP {
             role: "user",
             content: {
               type: "text",
-              text: `Run "snyk code test" on the current project.
+              text: `**Task:**
+            Run "snyk code test" on the current project.
             Fix the reported issues. 
             Add only the necessary code changes to fix the issues.
             Make sure the build is successful after making changes using the command
@@ -52,7 +53,8 @@ export class SnykMCP extends BaseMCP {
             role: "user",
             content: {
               type: "text",
-              text: `Run "snyk code test" on the current project.
+              text: `**Task:**
+            Run "snyk code test" on the current project.
             Fix the reported issues.
             Add only the necessary code changes to fix the issues.
             Make sure the build is successful after making changes.
@@ -75,7 +77,8 @@ export class SnykMCP extends BaseMCP {
             role: "user",
             content: {
               type: "text",
-              text: `Step 1:
+              text: `**Task:**
+            **Step 1:**
             Run "snyk code test" on the current project.
             Fix the reported issues.
             Add only the necessary code changes to fix the issues.
@@ -91,7 +94,7 @@ export class SnykMCP extends BaseMCP {
             Run "snyk code test" again to verify that the issues are resolved.
             Keep the reasoning steps to 5 to 10 words.
              
-            Step 2:
+            **Step 2:**
             Update the respective unit tests.
             Run tests to ensure everything is working correctly using below command:
              

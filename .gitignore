@@ -37,6 +37,9 @@ jspm_packages/
 .env
 .env.*
 
+# NPM configuration
+.npmrc
+
 # Mac system files
 .DS_Store
 

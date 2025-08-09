@@ -1,110 +1,83 @@
-# ALI Dev MCP Server
-
-## Project Overview
-
-A Model Context Protocol server for ALI development workflows (MCAT, Snyk, Unit Test, etc.)
+# MCP Client Configuration
 
 ## Prerequisites
 
-- Node.js 18.0.0 or higher
-- npm (comes with Node.js)
+Before using the ALI Dev MCP Server, ensure you have:
 
-## Installation Steps
+- **Node.js** version 18.0.0 or higher installed
 
-1. Download Node.js from the official website: [https://nodejs.org/](https://nodejs.org/)
-2. Run the installer and follow the instructions.
-3. Verify installation:
+  - Download from [nodejs.org](https://nodejs.org/)
+  - Verify installation:
 
-   ```bash
-   node -v
-   npm -v
-   ```
+    ```bash
+    node --version
+    ```
 
-## Azure DevOps Pipeline
+    ```bash
+    npm --version
+    ```
+- **Azure CLI** installed and configured:
 
-- The project includes an `azure-pipelines.yml` for CI/CD. It installs dependencies, builds the project, and can be extended for testing and deployment.
+  - Download from [Microsoft Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows)
+  - For Windows: Download and run the MSI installer
+  - Verify installation:
+    ```powershell
+    az --version
+    ```
+  - Login to Azure:
+    ```powershell
+    az login
+    ```
+- **Registry configuration** - Follow these steps to configure the Azure DevOps registry:
+- 1. **Install vsts-npm-auth globally:**
 
-## Project Structure
+     ```powershell
+     npm install -g vsts-npm-auth
+     ```
+  2. **Create .npmrc file in your home directory:**
 
+     **PowerShell:**
+     ```powershell
+     echo "registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/" | Out-File -FilePath "$env:USERPROFILE\.npmrc" -Encoding utf8
+     echo "always-auth=true" | Out-File -FilePath "$env:USERPROFILE\.npmrc" -Append -Encoding utf8
+     ```
+
+     **Command Prompt (cmd):**
+     ```cmd
+     echo registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/ > "%USERPROFILE%\.npmrc"
+     echo always-auth=true >> "%USERPROFILE%\.npmrc"
+     ```
+
+     Or manually create the file at `%USERPROFILE%\.npmrc` with this content:
+
+     ```
+     registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/
+     always-auth=true
+     ```
+  3. **Configure VSTS authentication:**
+
+     ```powershell
+     vsts-npm-auth -config .npmrc
+     ```
+
+## VS Code GitHub Copilot
+
+To use the ALI Dev MCP Server with VS Code GitHub Copilot, add this configuration to your MCP settings:
+
+```json
+{
+  "servers": {
+    "ali-dev-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@ppm/ali-dev-mcp"]
+    }
+  }
+}
 ```
-ali-dev-mcp-nodejs/
-├── src/
-│   ├── index.ts              # Main server entry point
-│   ├── mcp/
-│   │   ├── baseMcp.ts       # Base MCP class
-│   │   ├── mcatMcp.ts       # MCAT functionality
-│   │   └── snykMcp.ts       # Snyk functionality
-│   └── helper/
-│       └── azureGetTestcase.ts # Azure DevOps test case helper
-├── .vscode/
-│   └── mcp.json             # MCP configuration for VS Code
-├── dist/                     # Compiled JavaScript (generated)
-├── test-server.js            # Test server for MCP functionality
-├── azure-pipelines.yml      # CI/CD pipeline configuration
-├── MCP-CLIENT-CONFIG.md      # MCP client configuration guide
-├── package.json
-├── tsconfig.json
-└── README.md
-```
 
-## Dependencies
+## Troubleshooting
 
-- `@modelcontextprotocol/sdk` - MCP SDK for Node.js
-- `@azure/identity` - Azure authentication
-- `azure-devops-node-api` - Azure DevOps API
-- `jsdom` - HTML parsing for test case extraction
-
-## Development
-
-1. Clone the repository
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-3. Build:
-
-   ```bash
-   npm run build
-   ```
-4. Run in dev mode:
-
-   ```bash
-   npm run dev
-   ```
-
-### Add a New MCP Provider
-
-1. Create a new file in `src/mcp/` (e.g., `myMcp.ts`).
-2. Extend the `BaseMCP` class and implement `registerTools()` and `registerPrompts()`.
-3. Import and register your new MCP in `src/index.ts`.
-4. Run `npm test` to verify the new MCP provider is properly integrated and working.
-
-## Available Tools and Prompts
-
-### MCAT MCP
-
-**Tools:**
-
-- `get_test_case`: Fetches a test case from Azure DevOps.
-
-**Prompts:**
-
-- `write-new-mcat`: Generates new MCAT test based on Azure DevOps test case details.
-- `run-and-debug-mcat`: Run and debug MCAT tests using the specified test name.
-
-### Snyk MCP
-
-**Prompts:**
-
-- `fix-snyk-issue-C++`: Fix Snyk issues in the C++ code.
-- `fix-snyk-issue-C#`: Fix Snyk issues in the C# code.
-- `fix-snyk-issue-C#-withUT`: Fix Snyk issues in the C# code with unit tests.
-
-## MCP Client Configuration
-
-For information on configuring this server with MCP clients (such as VS Code GitHub Copilot), see [MCP-CLIENT-CONFIG.md](MCP-CLIENT-CONFIG.md).
-
-## Copyright
-
-© 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.
+- Verify Node.js version compatibility (18.0.0 or higher)
+- Check that the server starts correctly by running `npx -y @ppm/ali-dev-mcp --registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/` in a terminal
+- If you encounter authentication issues, ensure you're logged in to Azure DevOps and have access to the PPM package feed
