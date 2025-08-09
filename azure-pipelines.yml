@@ -10,3 +10,6 @@ steps:
 
 - script: npm run build
   displayName: 'npm run build'
+
+- script: npm test
+  displayName: 'npm test'

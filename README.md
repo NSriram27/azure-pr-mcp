@@ -20,17 +20,6 @@ A Model Context Protocol server for ALI development workflows (MCAT, Snyk, Unit 
    npm -v
    ```
 
-## npm Registry Configuration
-
-- By default, the project uses the public npm registry. If you need to use a private Azure DevOps feed for specific packages, add a scoped registry to your `.npmrc`:
-
-  ```properties
-  registry=https://registry.npmjs.org/
-  # @your-scope:registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/
-  ```
-
-- Remove `always-auth=true` unless you specifically need it for private feeds.
-
 ## Azure DevOps Pipeline
 
 - The project includes an `azure-pipelines.yml` for CI/CD. It installs dependencies, builds the project, and can be extended for testing and deployment.
@@ -47,7 +36,12 @@ ali-dev-mcp-nodejs/
 │   │   └── snykMcp.ts       # Snyk functionality
 │   └── helper/
 │       └── azureGetTestcase.ts # Azure DevOps test case helper
+├── .vscode/
+│   └── mcp.json             # MCP configuration for VS Code
 ├── dist/                     # Compiled JavaScript (generated)
+├── test-server.js            # Test server for MCP functionality
+├── azure-pipelines.yml      # CI/CD pipeline configuration
+├── MCP-CLIENT-CONFIG.md      # MCP client configuration guide
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -68,13 +62,11 @@ ali-dev-mcp-nodejs/
    ```bash
    npm install
    ```
-
 3. Build:
 
    ```bash
    npm run build
    ```
-
 4. Run in dev mode:
 
    ```bash
@@ -86,6 +78,7 @@ ali-dev-mcp-nodejs/
 1. Create a new file in `src/mcp/` (e.g., `myMcp.ts`).
 2. Extend the `BaseMCP` class and implement `registerTools()` and `registerPrompts()`.
 3. Import and register your new MCP in `src/index.ts`.
+4. Run `npm test` to verify the new MCP provider is properly integrated and working.
 
 ## Available Tools and Prompts
 
@@ -108,21 +101,9 @@ ali-dev-mcp-nodejs/
 - `fix-snyk-issue-C#`: Fix Snyk issues in the C# code.
 - `fix-snyk-issue-C#-withUT`: Fix Snyk issues in the C# code with unit tests.
 
-## MCP Config for VS Code GitHub Copilot
+## MCP Client Configuration
 
-Add this to your MCP configuration:
-
-```json
-{
-  "servers": {
-    "ali-dev-mcp": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["@ppm/ali-dev-mcp"]
-    }
-  }
-}
-```
+For information on configuring this server with MCP clients (such as VS Code GitHub Copilot), see [MCP-CLIENT-CONFIG.md](MCP-CLIENT-CONFIG.md).
 
 ## Copyright
 
