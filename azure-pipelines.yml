@@ -11,5 +11,8 @@ steps:
 - script: npm run build
   displayName: 'npm run build'
 
+- script: npm run test:jest
+  displayName: 'Run Jest unit tests'
+
 - script: npm test
   displayName: 'npm test'
