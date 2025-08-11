@@ -62,7 +62,9 @@ Before using the ALI Dev MCP Server, ensure you have:
 
 ## VS Code GitHub Copilot
 
-To use the ALI Dev MCP Server with VS Code GitHub Copilot, add this configuration to your MCP settings:
+To use the ALI Dev MCP Server with VS Code GitHub Copilot, add this configuration to your MCP settings.
+
+**Configuration file location:** `C:\Users\gmuthu\AppData\Roaming\Code\User\mcp.json`
 
 ```json
 {
