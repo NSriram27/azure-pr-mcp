@@ -1,6 +1,11 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BaseMCP } from "./baseMcp.js";
-import { getStepsFromTestcase } from "../helper/azureGetTestcase.js";
+import { 
+  getStepsFromTestcase, 
+  getAutomationDetailsFromWorkItem, 
+  updateAutomationDetailsInWorkItem, 
+  clearAutomationDetailsInWorkItem 
+} from "../helper/azureHelper.js";
 import { z } from "zod";
 
 /**
@@ -34,6 +39,114 @@ export class MCATMCP extends BaseMCP {
             {
               type: "text",
               text: `Error fetching test case: ${error instanceof Error ? error.message : String(error)}`
+            }
+          ],
+          isError: true
+        };
+      }
+    });
+
+    // Register the get_automation_details tool
+    this.server.registerTool("get_automation_details", {
+      description: "Get automation details from an Azure DevOps work item",
+      inputSchema: {
+        workItemId: z.string().describe("The work item ID to get automation details from")
+      }
+    }, async ({ workItemId }) => {
+      try {
+        const result = await getAutomationDetailsFromWorkItem(workItemId);
+        return {
+          content: [
+            {
+              type: "text",
+              text: JSON.stringify(result, null, 2)
+            }
+          ]
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error getting automation details: ${error instanceof Error ? error.message : String(error)}`
+            }
+          ],
+          isError: true
+        };
+      }
+    });
+
+    // Register the update_automation_details tool
+    this.server.registerTool("update_automation_details", {
+      description: "Update automation details in an Azure DevOps work item",
+      inputSchema: {
+        workItemId: z.string().describe("The work item ID to update"),
+        automatedTestId: z.string().optional().describe("The automated test ID (will be used for both ID and name)"),
+        automatedTestStorage: z.string().optional().describe("The automated test storage"),
+        automationStatus: z.string().optional().describe("The automation status")
+      }
+    }, async ({ workItemId, automatedTestId, automatedTestStorage, automationStatus }) => {
+      try {
+        const updates: any = {};
+        if (automatedTestId !== undefined) {
+          updates.automatedTestId = automatedTestId;
+          // Always set automatedTestName to the same value as automatedTestId
+          updates.automatedTestName = automatedTestId;
+        }
+        if (automatedTestStorage !== undefined) updates.automatedTestStorage = automatedTestStorage;
+        // Always set automatedTestType to "L2"
+        updates.automatedTestType = "L2";
+        if (automationStatus !== undefined) updates.automationStatus = automationStatus;
+
+        const success = await updateAutomationDetailsInWorkItem(workItemId, updates);
+        return {
+          content: [
+            {
+              type: "text",
+              text: success ? 
+                `Successfully updated automation details for work item ${workItemId}` : 
+                `Failed to update automation details for work item ${workItemId}`
+            }
+          ]
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error updating automation details: ${error instanceof Error ? error.message : String(error)}`
+            }
+          ],
+          isError: true
+        };
+      }
+    });
+
+    // Register the clear_automation_details tool
+    this.server.registerTool("clear_automation_details", {
+      description: "Clear automation details from an Azure DevOps work item",
+      inputSchema: {
+        workItemId: z.string().describe("The work item ID to clear automation details from")
+      }
+    }, async ({ workItemId }) => {
+      try {
+        const success = await clearAutomationDetailsInWorkItem(workItemId);
+        return {
+          content: [
+            {
+              type: "text",
+              text: success ? 
+                `Successfully cleared automation details for work item ${workItemId}` : 
+                `Failed to clear automation details for work item ${workItemId}`
+            }
+          ]
+        };
+      } catch (error) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Error clearing automation details: ${error instanceof Error ? error.message : String(error)}`
             }
           ],
           isError: true

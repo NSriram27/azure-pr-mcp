@@ -27,7 +27,7 @@ A Model Context Protocol server for ALI development workflows (MCAT, Snyk, Unit 
 ## Project Structure
 
 ```
-ali-dev-mcp-nodejs/
+ali-dev-mcp/
 ├── src/
 │   ├── index.ts              # Main server entry point
 │   ├── mcp/
@@ -35,24 +35,43 @@ ali-dev-mcp-nodejs/
 │   │   ├── mcatMcp.ts       # MCAT functionality
 │   │   └── snykMcp.ts       # Snyk functionality
 │   └── helper/
-│       └── azureGetTestcase.ts # Azure DevOps test case helper
+│       └── azureHelper.ts   # Azure DevOps helper functions
+├── test/
+│   └── azureHelper.test.ts  # Jest tests for Azure helper functions
+│   └── test-server.js       # Test server for MCP functionality
 ├── .vscode/
 │   └── mcp.json             # MCP configuration for VS Code
 ├── dist/                     # Compiled JavaScript (generated)
-├── test-server.js            # Test server for MCP functionality
+├── node_modules/             # Dependencies (generated)
+├── jest.config.mjs           # Jest testing configuration
 ├── azure-pipelines.yml      # CI/CD pipeline configuration
 ├── MCP-CLIENT-CONFIG.md      # MCP client configuration guide
-├── package.json
-├── tsconfig.json
-└── README.md
+├── README-DEV.md             # Development documentation
+├── package.json              # Project dependencies and scripts
+├── package-lock.json         # Dependency lock file
+├── tsconfig.json             # TypeScript configuration
+└── README.md                 # Main project documentation
 ```
 
 ## Dependencies
 
+### Production Dependencies
 - `@modelcontextprotocol/sdk` - MCP SDK for Node.js
 - `@azure/identity` - Azure authentication
 - `azure-devops-node-api` - Azure DevOps API
 - `jsdom` - HTML parsing for test case extraction
+- `node-fetch` - HTTP client for API requests
+- `zod` - Runtime type validation
+
+### Development Dependencies
+- `typescript` - TypeScript compiler
+- `tsx` - TypeScript execution for development
+- `jest` - Testing framework
+- `@jest/globals` - Jest global functions
+- `@types/jest` - TypeScript types for Jest
+- `ts-jest` - TypeScript support for Jest
+- `@types/node` - Node.js TypeScript types
+- `@types/jsdom` - JSDOM TypeScript types
 
 ## Development
 
@@ -72,6 +91,19 @@ ali-dev-mcp-nodejs/
    ```bash
    npm run dev
    ```
+
+## Testing
+
+### Run Tests
+- **Jest Unit Tests**: `npm run test:jest`
+- **MCP Server Test**: `npm test`
+
+### Test Files
+- `test/azureHelper.test.ts` - Unit tests for Azure DevOps helper functions
+- `test/test-server.js` - Integration test for the MCP server
+
+### Adding Tests
+When adding new helper functions, create corresponding test files in the `test/` directory following the naming convention `[sourceFile].test.ts`.
 
 ### Add a New MCP Provider
 
