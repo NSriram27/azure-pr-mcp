@@ -1,6 +1,16 @@
-# MCP Client Configuration
+# ALI Dev MCP Server - Client Configuration
 
-## Prerequisites
+## 📋 Overview
+
+The ALI Dev MCP Server is an intelligent development assistant that **reduces development time by up to 80%** through automated test generation, security vulnerability fixes, and seamless Azure DevOps integration. This Model Context Protocol server works with VS Code GitHub Copilot to transform complex development workflows into simple, automated processes.
+
+**Key Capabilities:**
+
+- 🚀 **Instant MCAT Test Generation** from Azure DevOps test cases
+- 🔒 **Automated Security Fixes** for C++ and C# vulnerabilities
+- 🔄 **Seamless Azure DevOps Integration** for workflow automation
+
+## ⚡ Prerequisites
 
 Before using the ALI Dev MCP Server, ensure you have:
 
@@ -28,6 +38,20 @@ Before using the ALI Dev MCP Server, ensure you have:
     ```powershell
     az login
     ```
+- **Snyk CLI** (optional - for users utilizing Snyk security features):
+
+  - For Windows: Download and run the installer or use npm:
+  - ```powershell
+    npm install -g snyk
+    ```
+  - Verify installation:
+    ```powershell
+    snyk --version
+    ```
+  - Authenticate with Snyk:
+    ```powershell
+    snyk auth
+    ```
 - **Registry configuration** - Follow these steps to configure the Azure DevOps registry:
 - 1. **Install vsts-npm-auth globally:**
 
@@ -37,12 +61,14 @@ Before using the ALI Dev MCP Server, ensure you have:
   2. **Create .npmrc file in your home directory:**
 
      **PowerShell:**
+
      ```powershell
      echo "registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/" | Out-File -FilePath "$env:USERPROFILE\.npmrc" -Encoding utf8
      echo "always-auth=true" | Out-File -FilePath "$env:USERPROFILE\.npmrc" -Append -Encoding utf8
      ```
 
      **Command Prompt (cmd):**
+
      ```cmd
      echo registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/ > "%USERPROFILE%\.npmrc"
      echo always-auth=true >> "%USERPROFILE%\.npmrc"
@@ -60,7 +86,7 @@ Before using the ALI Dev MCP Server, ensure you have:
      vsts-npm-auth -config .npmrc
      ```
 
-## VS Code GitHub Copilot
+## 💻 VS Code GitHub Copilot
 
 To use the ALI Dev MCP Server with VS Code GitHub Copilot, add this configuration to your MCP settings.
 
@@ -78,7 +104,33 @@ To use the ALI Dev MCP Server with VS Code GitHub Copilot, add this configuratio
 }
 ```
 
-## Troubleshooting
+## 🛠️ Available Tools and Prompts
+
+The ALI Dev MCP Server provides several tools and prompts for development workflows:
+
+### MCAT MCP
+
+**Tools:**
+
+- `get_test_case`: Fetches a test case from Azure DevOps.
+- `get_automation_details`: Get automation details from an Azure DevOps work item.
+- `update_automation_details`: Update automation details in an Azure DevOps work item.
+- `clear_automation_details`: Clear automation details from an Azure DevOps work item.
+
+**Prompts:**
+
+- `write-new-mcat`: Generates new MCAT test based on Azure DevOps test case details.
+- `run-and-debug-mcat`: Run and debug MCAT tests using the specified test name.
+
+### Snyk MCP
+
+**Prompts:**
+
+- `fix-snyk-issue-C++`: Fix Snyk issues in the C++ code.
+- `fix-snyk-issue-C#`: Fix Snyk issues in the C# code.
+- `fix-snyk-issue-C#-withUT`: Fix Snyk issues in the C# code with unit tests.
+
+## 🔧 Troubleshooting
 
 - Verify Node.js version compatibility (18.0.0 or higher)
 - Check that the server starts correctly by running `npx -y @ppm/ali-dev-mcp --registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/` in a terminal
