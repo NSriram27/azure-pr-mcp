@@ -1,3 +1,7 @@
+/**
+ * © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.
+ */
+
 import { describe, it, expect, beforeAll } from '@jest/globals';
 import { getAutomationDetailsFromWorkItem, AutomationDetails } from '../src/helper/azureHelper';
 

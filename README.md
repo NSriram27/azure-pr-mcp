@@ -1,3 +1,5 @@
+<!-- © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved. -->
+
 # ALI Dev MCP Server - Client Configuration
 
 ## 📋 Overview
@@ -38,6 +40,7 @@ Before using the ALI Dev MCP Server, ensure you have:
     ```powershell
     az login
     ```
+  - Select the Visual Studio Subscription for which you have admin rights. Check you subscriptions [here](https://portal.azure.com/#view/Microsoft_Azure_Billing/SubscriptionsBladeV2).
 - **Snyk CLI** (optional - for users utilizing Snyk security features):
 
   - For Windows: Download and run the installer or use npm:
@@ -135,3 +138,7 @@ The ALI Dev MCP Server provides several tools and prompts for development workfl
 - Verify Node.js version compatibility (18.0.0 or higher)
 - Check that the server starts correctly by running `npx -y @ppm/ali-dev-mcp --registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/` in a terminal
 - If you encounter authentication issues, ensure you're logged in to Azure DevOps and have access to the PPM package feed
+
+## ©️ Copyright
+
+© 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.

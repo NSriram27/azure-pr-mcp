@@ -1,3 +1,7 @@
+/**
+ * © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.
+ */
+
 const config = {
   preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts'],

@@ -1,3 +1,5 @@
+<!-- © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved. -->
+
 # ALI Dev MCP Server
 
 ## 📋 Project Overview
