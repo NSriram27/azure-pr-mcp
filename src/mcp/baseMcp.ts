@@ -1,3 +1,7 @@
+/**
+ * © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.
+ */
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 /**

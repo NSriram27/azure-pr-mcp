@@ -1,3 +1,7 @@
+/**
+ * © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.
+ */
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BaseMCP } from "./baseMcp.js";
 import { 
@@ -96,7 +100,10 @@ export class MCATMCP extends BaseMCP {
         if (automatedTestStorage !== undefined) updates.automatedTestStorage = automatedTestStorage;
         // Always set automatedTestType to "L2"
         updates.automatedTestType = "L2";
-        if (automationStatus !== undefined) updates.automationStatus = automationStatus;
+        if (automationStatus !== undefined) {
+            updates.automationStatus = automationStatus;
+            updates.automationStatusCustom = automationStatus;
+          }
 
         const success = await updateAutomationDetailsInWorkItem(workItemId, updates);
         return {
@@ -174,7 +181,18 @@ export class MCATMCP extends BaseMCP {
             content: {
               type: "text",
               text: `Instructions:
-         
+              - Follow the below steps and **Do not skip any steps**
+              - Do not proceed to next step until the current one is complete
+              - Add comment to the file below copyright
+                <AI Generated Code>
+              - Clean up the generated code
+                - Remove any unnecessary whitespace or comments
+                - Ensure proper indentation and formatting
+                - Remove unnecessary references
+              - The test and the filename should match the naming conventions used in the project.
+              - Filename should not contain any numbers.
+
+            Steps:
               Step 1 - Retrieve Test Steps:
               Use the get_test_case tool with the test case ID ${testid} to fetch the associated steps and expected results.
               List down the steps and expected results for clarity.
@@ -202,9 +220,7 @@ export class MCATMCP extends BaseMCP {
               Step 5 - Debug if Needed:
               If the test fails, identify and fix any errors in the MCAT and build.
               Re-run the test until it passes successfully.
-              After completing all the steps show the log file.
-              
-              IMPORTANT: Do NOT proceed to Step 3 without completing Step 2. You must search the workspace for reference patterns first.`
+              After completing all the steps show the log file.`
             }
           }
         ]

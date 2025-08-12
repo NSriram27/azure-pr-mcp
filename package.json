@@ -1,6 +1,7 @@
 {
   "name": "@ppm/ali-dev-mcp",
-  "version": "1.0.5",
+  "version": "1.0.6",
+  "copyright": "© 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.",
   "type": "module",
   "description": "A Model Context Protocol server that provides development tools through a unified MCP interface, for ALI development works. (MCAT, Snyk, Unit Test, etc.)",
   "main": "dist/index.js",

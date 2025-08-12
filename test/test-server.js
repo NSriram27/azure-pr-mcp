@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+/**
+ * © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.
+ */
+
 import { readFileSync } from "fs";
 import { spawn } from "child_process";
 import { join } from "path";

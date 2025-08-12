@@ -1,3 +1,7 @@
+/**
+ * © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.
+ */
+
 import { DefaultAzureCredential } from "@azure/identity";
 import * as azdev from "azure-devops-node-api";
 import { JSDOM } from "jsdom";
@@ -58,6 +62,7 @@ export interface AutomationDetails {
   automatedTestStorage?: string;
   automatedTestType?: string;
   automationStatus?: string;
+  automationStatusCustom?: string;
 }
 
 export async function getAutomationDetailsFromWorkItem(workItemId: string): Promise<AutomationDetails> {
@@ -94,6 +99,7 @@ export async function getAutomationDetailsFromWorkItem(workItemId: string): Prom
       automationDetails.automatedTestStorage = workItem.fields['Microsoft.VSTS.TCM.AutomatedTestStorage'] as string;
       automationDetails.automatedTestType = workItem.fields['Microsoft.VSTS.TCM.AutomatedTestType'] as string;
       automationDetails.automationStatus = workItem.fields['Microsoft.VSTS.TCM.AutomationStatus'] as string;
+      automationDetails.automationStatusCustom = workItem.fields['Custom.AutomationStatus'] as string;
     }
     
     return automationDetails;
@@ -172,6 +178,14 @@ export async function updateAutomationDetailsInWorkItem(
       });
     }
     
+    if (updates.automationStatusCustom !== undefined) {
+      patchDocument.push({
+        op: "replace",
+        path: "/fields/Custom.AutomationStatus",
+        value: updates.automationStatusCustom
+      });
+    }
+    
     // Only proceed if there are actual updates to make
     if (patchDocument.length === 0) {
       throw new Error("No updates provided");
@@ -236,6 +250,10 @@ export async function clearAutomationDetailsInWorkItem(workItemId: string): Prom
         op: "replace",
         path: "/fields/Microsoft.VSTS.TCM.AutomationStatus",
         value: "Not Automated"
+      },
+      {
+        op: "remove",
+        path: "/fields/Custom.AutomationStatus"
       }
     ];
     
