@@ -10,13 +10,13 @@ import { MCATMCP } from "./mcp/mcatMcp.js";
 import { SnykMCP } from "./mcp/snykMcp.js";
 
 /**
- * Main entry point for the ALI Dev MCP Server
+ * Main entry point for the S3D Dev MCP Server
  */
 async function main() {
   // Initialize MCP server
   const server = new McpServer(
     {
-      name: "ali-dev-mcp",
+      name: "s3d-dev-mcp",
       version: "1.0.0",
     },
     {
@@ -41,7 +41,7 @@ async function main() {
   await server.connect(transport);
 
   // Log server start
-  console.info("ALI Dev MCP Server running on stdio");
+  console.info("S3D Dev MCP Server running on stdio");
 }
 
 // Handle shutdown gracefully

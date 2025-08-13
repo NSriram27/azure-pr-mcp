@@ -1,12 +1,12 @@
 {
-  "name": "@ppm/ali-dev-mcp",
-  "version": "1.0.6",
+  "name": "@ppm/s3d-dev-mcp",
+  "version": "1.0.0",
   "copyright": "© 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.",
   "type": "module",
-  "description": "A Model Context Protocol server that provides development tools through a unified MCP interface, for ALI development works. (MCAT, Snyk, Unit Test, etc.)",
+  "description": "A Model Context Protocol server that provides development tools through a unified MCP interface, for S3D development works. (MCAT, Snyk, Unit Test, etc.)",
   "main": "dist/index.js",
   "bin": {
-    "ali-dev-mcp": "dist/index.js"
+    "s3d-dev-mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -24,7 +24,7 @@
     "development-tools",
     "mcat"
   ],
-  "author": "ALI Development Team",
+  "author": "S3D Development Team",
   "license": "MIT",
   "dependencies": {
     "@azure/identity": "^4.0.1",

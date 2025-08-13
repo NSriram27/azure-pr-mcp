@@ -1,10 +1,10 @@
 <!-- © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved. -->
 
-# ALI Dev MCP Server - Client Configuration
+# S3D Dev MCP Server - Client Configuration
 
 ## 📋 Overview
 
-The ALI Dev MCP Server is an intelligent development assistant that **reduces development time by up to 80%** through automated test generation, security vulnerability fixes, and seamless Azure DevOps integration. This Model Context Protocol server works with VS Code GitHub Copilot to transform complex development workflows into simple, automated processes.
+The S3D Dev MCP Server is an intelligent development assistant that **reduces development time by up to 80%** through automated test generation, security vulnerability fixes, and seamless Azure DevOps integration. This Model Context Protocol server works with VS Code GitHub Copilot to transform complex development workflows into simple, automated processes.
 
 **Key Capabilities:**
 
@@ -14,7 +14,7 @@ The ALI Dev MCP Server is an intelligent development assistant that **reduces de
 
 ## ⚡ Prerequisites
 
-Before using the ALI Dev MCP Server, ensure you have:
+Before using the S3D Dev MCP Server, ensure you have:
 
 - **Node.js** version 18.0.0 or higher installed
 
@@ -91,17 +91,17 @@ Before using the ALI Dev MCP Server, ensure you have:
 
 ## 💻 VS Code GitHub Copilot
 
-To use the ALI Dev MCP Server with VS Code GitHub Copilot, add this configuration to your MCP settings.
+To use the S3D Dev MCP Server with VS Code GitHub Copilot, add this configuration to your MCP settings.
 
 **Configuration file location:** `C:\Users\gmuthu\AppData\Roaming\Code\User\mcp.json`
 
 ```json
 {
   "servers": {
-    "ali-dev-mcp": {
+    "s3d-dev-mcp": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@ppm/ali-dev-mcp"]
+      "args": ["-y", "@ppm/s3d-dev-mcp"]
     }
   }
 }
@@ -136,7 +136,7 @@ The ALI Dev MCP Server provides several tools and prompts for development workfl
 ## 🔧 Troubleshooting
 
 - Verify Node.js version compatibility (18.0.0 or higher)
-- Check that the server starts correctly by running `npx -y @ppm/ali-dev-mcp --registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/` in a terminal
+- Check that the server starts correctly by running `npx -y @ppm/s3d-dev-mcp --registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/` in a terminal
 - If you encounter authentication issues, ensure you're logged in to Azure DevOps and have access to the PPM package feed
 
 ## ©️ Copyright

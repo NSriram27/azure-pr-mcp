@@ -1,10 +1,10 @@
 <!-- © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved. -->
 
-# ALI Dev MCP Server
+# S3D Dev MCP Server
 
 ## 📋 Project Overview
 
-The ALI Dev MCP Server is a development assistant that significantly **reduces development time** and **streamlines workflows** for ALI development teams. This Model Context Protocol (MCP) server integrates seamlessly with VS Code GitHub Copilot to provide automated assistance.
+The S3D Dev MCP Server is a development assistant that significantly **reduces development time** and **streamlines workflows** for S3D development teams. This Model Context Protocol (MCP) server integrates seamlessly with VS Code GitHub Copilot to provide automated assistance.
 
 ### 🚀 **Key Benefits:**
 
@@ -37,7 +37,7 @@ This server transforms complex, time-consuming development tasks into simple, au
 ## 📁 Project Structure
 
 ```
-ali-dev-mcp/
+s3d-dev-mcp/
 ├── src/
 │   ├── index.ts              # Main server entry point
 │   ├── mcp/
