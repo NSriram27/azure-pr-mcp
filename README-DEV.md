@@ -49,13 +49,8 @@ s3d-dev-mcp/
 ├── test/
 │   └── azureHelper.test.ts  # Jest tests for Azure helper functions
 │   └── test-server.js       # Test server for MCP functionality
-├── .vscode/
-│   └── mcp.json             # MCP configuration for VS Code
-├── dist/                     # Compiled JavaScript (generated)
-├── node_modules/             # Dependencies (generated)
 ├── jest.config.mjs           # Jest testing configuration
 ├── azure-pipelines.yml      # CI/CD pipeline configuration
-├── MCP-CLIENT-CONFIG.md      # MCP client configuration guide
 ├── README-DEV.md             # Development documentation
 ├── package.json              # Project dependencies and scripts
 ├── package-lock.json         # Dependency lock file
