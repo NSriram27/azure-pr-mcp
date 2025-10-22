@@ -8,6 +8,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { MCATMCP } from "./mcp/mcatMcp.js";
 import { SnykMCP } from "./mcp/snykMcp.js";
+import { CreateATPMCP } from "./mcp/createATPMcp.js";
 
 /**
  * Main entry point for the S3D Dev MCP Server
@@ -33,6 +34,9 @@ async function main() {
 
   const snykMcp = new SnykMCP(server);
   snykMcp.register();
+
+  const createATPMcp = new CreateATPMCP(server);
+  createATPMcp.register();
 
   // Set up stdio transport
   const transport = new StdioServerTransport();

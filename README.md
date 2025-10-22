@@ -11,6 +11,7 @@ The S3D Dev MCP Server is an intelligent development assistant that **reduces de
 - 🚀 **Instant MCAT Test Generation** from Azure DevOps test cases
 - 🔒 **Automated Security Fixes** for C++ and C# vulnerabilities
 - 🔄 **Seamless Azure DevOps Integration** for workflow automation
+- 🧪 **Automated ATP Generation** from test case specifications
 
 ## ⚡ Prerequisites
 
@@ -124,6 +125,13 @@ The ALI Dev MCP Server provides several tools and prompts for development workfl
 
 - `write-new-mcat`: Generates new MCAT test based on Azure DevOps test case details.
 - `run-and-debug-mcat`: Run and debug MCAT tests using the specified test name.
+
+### CreateATP MCP
+
+**Prompts:**
+
+- `generate-atp-from-testcase`: Completes ATP generation workflow from test case.
+
 
 ### Snyk MCP
 

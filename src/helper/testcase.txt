@@ -1,0 +1,20 @@
+Test Case Repository
+===================
+
+This file contains structured test cases for ATP generation using the generate-atp-from-testcase prompt.
+
+Format:
+-------
+Test Case ID: [Unique identifier]
+Title: [Brief description of the test case]
+Steps:
+1. [First action step]
+2. [Second action step]
+...
+Expected Result: [What should happen after all steps]
+
+---
+
+Usage Instructions:
+==================
+Add new test cases following the format above
