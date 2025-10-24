@@ -131,6 +131,9 @@ The ALI Dev MCP Server provides several tools and prompts for development workfl
 **Prompts:**
 
 - `generate-atp-from-testcase`: Completes ATP generation workflow from test case.
+Testcase can be provided in below ways:
+  1.	Directly through prompt 
+  2.	By creating TestCase.txt file in the workspace
 
 
 ### Snyk MCP
