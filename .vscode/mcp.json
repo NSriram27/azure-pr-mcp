@@ -1,0 +1,32 @@
+{
+  "servers": {
+    "ado": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@azure-devops/mcp",
+        "${input:ado_org}"
+      ]
+    },
+    
+    "ali-dev-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "tsx",
+        "C:\\Users\\vneeruko\\OneDrive - Hexagon\\Desktop\\Ali_Dev_Mcp_Server\\src\\index.ts"
+      ],
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  },
+  "inputs": [
+    {
+      "id": "ado_org",
+      "type": "promptString",
+      "description": "Azure DevOps organization name  (e.g. 'contoso')"
+    }
+  ]
+}

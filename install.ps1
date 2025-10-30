@@ -68,7 +68,7 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Copy Required Files
 # ------------------------------------------------
 Write-Host "Copying server files..."
-$filesToCopy = @("src", "package.json", "tsconfig.json")
+$filesToCopy = @("src", "package.json", "tsconfig.json", ".vscode")
 
 foreach ($item in $filesToCopy) {
     $source = Join-Path $scriptDir $item

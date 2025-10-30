@@ -26,8 +26,6 @@ jspm_packages/
 # TypeScript
 *.tsbuildinfo
 
-# VS Code
-.vscode/
 
 # Build output
 /dist/
