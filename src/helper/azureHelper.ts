@@ -3,75 +3,54 @@
  */
 
 import { DefaultAzureCredential } from "@azure/identity";
-import * as azdev from "azure-devops-node-api";
-import { JSDOM } from "jsdom";
 
 /**
- * Interface for test step
+ * Interface for PR file change
  */
-interface TestStep {
-  step: number;
-  action: string;
-  expectedResult: string[];
+export interface PRFileChange {
+  changeType: string;
+  item: {
+    path: string;
+    url: string;
+  };
+  sourceServerItem?: string;
+  originalPath?: string;
+}
+
+
+
+
+/**
+ * Interface for PR file change
+ */
+export interface PRFileChange {
+  changeType: string;
+  item: {
+    path: string;
+    url: string;
+  };
+  sourceServerItem?: string;
+  originalPath?: string;
 }
 
 /**
- * Interface for test case result
+ * Interface for PR iteration result
  */
-interface TestCaseResult {
-  steps: TestStep[];
+export interface PRIterationResult {
+  iterationId: number;
+  changes: PRFileChange[];
 }
 
 /**
- * Utility to strip all HTML/XML tags from a string
+ * Utility to get the latest iteration ID for a pull request
  */
-function stripTags(text: string): string {
-  const clean = text.replace(/<.*?>/g, '');
-  return clean.trim() || 'none';
-}
-
-/**
- * Utility to split expected results into a list, removing numbering
- * e.g. '1. First step2. Second step' -> ['First step', 'Second step']
- */
-function splitExpected(text: string): string[] {
-  // Remove HTML entities if any
-  text = text.replace(/&[a-zA-Z0-9#]+;/g, '');
-  text = text.trim();
-  
-  // Find all matches for numbered steps (e.g., '1. ...', '2. ...')
-  const matches = text.match(/\d+\.\s*([^\d]+?)(?=(?:\d+\.|$))/g);
-  
-  if (matches) {
-    // Clean up whitespace and filter out empty strings
-    const result = matches
-      .map(m => m.replace(/^\d+\.\s*/, '').trim())
-      .filter(m => m);
-    return result.length > 0 ? result : (text ? [text] : ['none']);
-  }
-  
-  return text ? [text] : ['none'];
-}
-
-/**
- * Interface for automation details from work item
- */
-export interface AutomationDetails {
-  automatedTestId?: string;
-  automatedTestName?: string;
-  automatedTestStorage?: string;
-  automatedTestType?: string;
-  automationStatus?: string;
-  automationStatusCustom?: string;
-}
-
-export async function getAutomationDetailsFromWorkItem(workItemId: string): Promise<AutomationDetails> {
-  // Organization URL for Azure DevOps
-  //const organizationUrl = 'https://dev.azure.com/gopimuthu';
-  const organizationUrl = 'https://dev.azure.com/hexagonppmcol';
-
+export async function getPRLatestIterationId(
+  organization: string,
+  project: string,
+  repositoryId: string,
+  pullRequestId: number
+): Promise<number> {
   try {
-    // Get an access token using DefaultAzureCredential
     const credential = new DefaultAzureCredential();
     const tokenResponse = await credential.getToken("https://app.vssps.visualstudio.com/.default");
     
@@ -79,141 +58,55 @@ export async function getAutomationDetailsFromWorkItem(workItemId: string): Prom
       throw new Error("Failed to get access token");
     }
 
-    // Create connection to Azure DevOps
-    const authHandler = azdev.getPersonalAccessTokenHandler(tokenResponse.token);
-    const connection = new azdev.WebApi(organizationUrl, authHandler);
+    // Construct the REST API URL directly
+    const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}/iterations?api-version=7.0`;
     
-    // Get the work item tracking client
-    const witClient = await connection.getWorkItemTrackingApi();
-    
-    // Get the work item from Azure DevOps
-    const workItem = await witClient.getWorkItem(parseInt(workItemId));
-    
-    const automationDetails: AutomationDetails = {};
-    
-    if (workItem && workItem.fields) {
-      // Extract automation-related fields from the work item
-      // These field names are based on standard Azure DevOps Test Case fields
-      automationDetails.automatedTestId = workItem.fields['Microsoft.VSTS.TCM.AutomatedTestId'] as string;
-      automationDetails.automatedTestName = workItem.fields['Microsoft.VSTS.TCM.AutomatedTestName'] as string;
-      automationDetails.automatedTestStorage = workItem.fields['Microsoft.VSTS.TCM.AutomatedTestStorage'] as string;
-      automationDetails.automatedTestType = workItem.fields['Microsoft.VSTS.TCM.AutomatedTestType'] as string;
-      automationDetails.automationStatus = workItem.fields['Microsoft.VSTS.TCM.AutomationStatus'] as string;
-      automationDetails.automationStatusCustom = workItem.fields['Custom.AutomationStatus'] as string;
-    }
-    
-    return automationDetails;
-  } catch (error) {
-    throw new Error(`Failed to get automation details from work item: ${error instanceof Error ? error.message : String(error)}`);
-  }
-}
+    // Make direct REST API call
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${tokenResponse.token}`,
+        'Content-Type': 'application/json'
+      }
+    });
 
-/**
- * Utility to update automation details for Azure DevOps work item
- */
-export async function updateAutomationDetailsInWorkItem(
-  workItemId: string, 
-  updates: AutomationDetails
-): Promise<boolean> {
-  // Organization URL for Azure DevOps
-  //const organizationUrl = 'https://dev.azure.com/gopimuthu';
-  const organizationUrl = 'https://dev.azure.com/hexagonppmcol';
-
-  try {
-    // Get an access token using DefaultAzureCredential
-    const credential = new DefaultAzureCredential();
-    const tokenResponse = await credential.getToken("https://app.vssps.visualstudio.com/.default");
-    
-    if (!tokenResponse) {
-      throw new Error("Failed to get access token");
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
 
-    // Create connection to Azure DevOps
-    const authHandler = azdev.getPersonalAccessTokenHandler(tokenResponse.token);
-    const connection = new azdev.WebApi(organizationUrl, authHandler);
+    const data = await response.json() as any;
+    const iterations = data.value;
     
-    // Get the work item tracking client
-    const witClient = await connection.getWorkItemTrackingApi();
-    
-    // Build the patch document with field updates
-    const patchDocument: any[] = [];
-    
-    if (updates.automatedTestId !== undefined) {
-      patchDocument.push({
-        op: "replace",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestId",
-        value: updates.automatedTestId
-      });
+    if (!iterations || iterations.length === 0) {
+      throw new Error('No iterations found for this pull request');
     }
-    
-    if (updates.automatedTestName !== undefined) {
-      patchDocument.push({
-        op: "replace",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestName",
-        value: updates.automatedTestName
-      });
-    }
-    
-    if (updates.automatedTestStorage !== undefined) {
-      patchDocument.push({
-        op: "replace",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestStorage",
-        value: updates.automatedTestStorage
-      });
-    }
-    
-    if (updates.automatedTestType !== undefined) {
-      patchDocument.push({
-        op: "replace",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestType",
-        value: updates.automatedTestType
-      });
-    }
-    
-    if (updates.automationStatus !== undefined) {
-      patchDocument.push({
-        op: "replace",
-        path: "/fields/Microsoft.VSTS.TCM.AutomationStatus",
-        value: updates.automationStatus
-      });
-    }
-    
-    if (updates.automationStatusCustom !== undefined) {
-      patchDocument.push({
-        op: "replace",
-        path: "/fields/Custom.AutomationStatus",
-        value: updates.automationStatusCustom
-      });
-    }
-    
-    // Only proceed if there are actual updates to make
-    if (patchDocument.length === 0) {
-      throw new Error("No updates provided");
-    }
-    
-    // Update the work item
-    const updatedWorkItem = await witClient.updateWorkItem(
-      undefined, // customHeaders
-      patchDocument,
-      parseInt(workItemId)
+
+    // Return the highest iteration ID (latest iteration)
+    const latestIteration = iterations.reduce((latest: any, current: any) => 
+      (current.id && latest.id && current.id > latest.id) ? current : latest
     );
-    
-    return updatedWorkItem !== null && updatedWorkItem !== undefined;
+
+    if (!latestIteration.id) {
+      throw new Error('Could not determine latest iteration ID');
+    }
+
+    return latestIteration.id;
   } catch (error) {
-    throw new Error(`Failed to update automation details in work item: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`Failed to get latest iteration ID: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
 /**
- * Utility to clear automation details from Azure DevOps work item
+ * Utility to get file changes for a specific PR iteration
  */
-export async function clearAutomationDetailsInWorkItem(workItemId: string): Promise<boolean> {
-  // Organization URL for Azure DevOps
-  //const organizationUrl = 'https://dev.azure.com/gopimuthu';
-  const organizationUrl = 'https://dev.azure.com/hexagonppmcol';
-
+export async function getPRIterationChanges(
+  organization: string,
+  project: string,
+  repositoryId: string,
+  pullRequestId: number,
+  iterationId: number
+): Promise<PRIterationResult> {
   try {
-    // Get an access token using DefaultAzureCredential
     const credential = new DefaultAzureCredential();
     const tokenResponse = await credential.getToken("https://app.vssps.visualstudio.com/.default");
     
@@ -221,65 +114,119 @@ export async function clearAutomationDetailsInWorkItem(workItemId: string): Prom
       throw new Error("Failed to get access token");
     }
 
-    // Create connection to Azure DevOps
-    const authHandler = azdev.getPersonalAccessTokenHandler(tokenResponse.token);
-    const connection = new azdev.WebApi(organizationUrl, authHandler);
+    // Construct the REST API URL directly
+    const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}/iterations/${iterationId}/changes?api-version=7.0`;
     
-    // Get the work item tracking client
-    const witClient = await connection.getWorkItemTrackingApi();
-    
-    // Build the patch document to clear all automation fields
-    const patchDocument: any[] = [
-      {
-        op: "remove",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestId"
-      },
-      {
-        op: "remove",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestName"
-      },
-      {
-        op: "remove",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestStorage"
-      },
-      {
-        op: "remove",
-        path: "/fields/Microsoft.VSTS.TCM.AutomatedTestType"
-      },
-      {
-        op: "replace",
-        path: "/fields/Microsoft.VSTS.TCM.AutomationStatus",
-        value: "Not Automated"
-      },
-      {
-        op: "remove",
-        path: "/fields/Custom.AutomationStatus"
+    // Make direct REST API call
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${tokenResponse.token}`,
+        'Content-Type': 'application/json'
       }
-    ];
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json() as any;
+    const changes = data;
     
-    // Update the work item
-    const updatedWorkItem = await witClient.updateWorkItem(
-      undefined, // customHeaders
-      patchDocument,
-      parseInt(workItemId)
+    if (!changes || !changes.changeEntries) {
+      return { iterationId, changes: [] };
+    }
+
+    // Map the changes to our interface
+    const mappedChanges: PRFileChange[] = changes.changeEntries.map((change: any) => ({
+      changeType: change.changeType?.toString() || 'unknown',
+      item: {
+        path: change.item?.path || '',
+        url: change.item?.url || ''
+      },
+      sourceServerItem: change.sourceServerItem,
+      originalPath: change.originalPath
+    }));
+
+    return {
+      iterationId,
+      changes: mappedChanges
+    };
+  } catch (error) {
+    throw new Error(`Failed to get iteration changes: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+/**
+ * Utility to get file changes from the latest iteration of a pull request
+ */
+export async function getPRFileChanges(
+  organization: string,
+  project: string,
+  repositoryId: string,
+  pullRequestId: number
+): Promise<PRIterationResult> {
+  try {
+    // First get the latest iteration ID
+    const latestIterationId = await getPRLatestIterationId(
+      organization,
+      project,
+      repositoryId,
+      pullRequestId
     );
-    
-    return updatedWorkItem !== null && updatedWorkItem !== undefined;
+
+    // Then get the changes for that iteration
+    return await getPRIterationChanges(
+      organization,
+      project,
+      repositoryId,
+      pullRequestId,
+      latestIterationId
+    );
   } catch (error) {
-    throw new Error(`Failed to clear automation details from work item: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`Failed to get PR file changes: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
 /**
- * Utility to get Azure DevOps test case details as JSON
+ * Interface for PR comment thread position
  */
-export async function getStepsFromTestcase(testid: string): Promise<TestCaseResult> {
-  // Organization URL for Azure DevOps
-  //const organizationUrl = 'https://dev.azure.com/gopimuthu';
-  const organizationUrl = 'https://dev.azure.com/hexagonppmcol';
+export interface PRCommentThreadPosition {
+  startLine: number;
+  endLine: number;
+  startColumn: number;
+  endColumn: number;
+}
 
+/**
+ * Interface for PR comment thread
+ */
+export interface PRCommentThread {
+  id?: number;
+  publishedDate?: string;
+  lastUpdatedDate?: string;
+  comments?: any[];
+  status?: string;
+  threadContext?: {
+    filePath: string;
+    rightFileStart?: PRCommentThreadPosition;
+    rightFileEnd?: PRCommentThreadPosition;
+  };
+}
+
+/**
+ * Utility to add an inline comment to a pull request in Azure DevOps
+ */
+export async function addPRInlineComment(
+  organization: string,
+  project: string,
+  repositoryId: string,
+  pullRequestId: number,
+  filePath: string,
+  lineNumber: number,
+  commentText: string
+): Promise<PRCommentThread> {
   try {
-    // Get an access token using DefaultAzureCredential
     const credential = new DefaultAzureCredential();
     const tokenResponse = await credential.getToken("https://app.vssps.visualstudio.com/.default");
     
@@ -287,59 +234,108 @@ export async function getStepsFromTestcase(testid: string): Promise<TestCaseResu
       throw new Error("Failed to get access token");
     }
 
-    // Create connection to Azure DevOps
-    const authHandler = azdev.getPersonalAccessTokenHandler(tokenResponse.token);
-    const connection = new azdev.WebApi(organizationUrl, authHandler);
+    // Construct the REST API URL for creating PR comment threads
+    const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}/threads?api-version=7.0`;
     
-    // Get the work item tracking client
-    const witClient = await connection.getWorkItemTrackingApi();
-    
-    // Get the work item (test case) from Azure DevOps
-    const workItem = await witClient.getWorkItem(parseInt(testid));
-    
-    const result: TestCaseResult = { steps: [] };
-    
-    if (workItem && workItem.fields && workItem.fields['Microsoft.VSTS.TCM.Steps']) {
-      const stepsHtml = workItem.fields['Microsoft.VSTS.TCM.Steps'] as string;
-      
-      // Parse the steps HTML and extract step/action/expected
-      const dom = new JSDOM(stepsHtml);
-      const document = dom.window.document;
-      
-      // Find all <parameterizedString> tags and extract their text content
-      const parameterizedElements = document.querySelectorAll('parameterizedstring');
-      const paramStrings: string[] = [];
-      
-      for (let i = 0; i < parameterizedElements.length; i++) {
-        const element = parameterizedElements[i];
-        paramStrings.push(element.textContent?.trim() || '');
+    // Prepare the comment thread payload
+    const threadPayload = {
+      comments: [
+        {
+          commentType: "text",
+          content: commentText
+        }
+      ],
+      status: "active",
+      threadContext: {
+        filePath: filePath,
+        rightFileStart: {
+          line: lineNumber,
+          offset: 1
+        },
+        rightFileEnd: {
+          line: lineNumber,
+          offset: 1
+        }
       }
-      
-      // Remove any remaining HTML/XML tags from each string
-      const cleanParamStrings = paramStrings.map(s => stripTags(s));
-      
-      let stepNumber = 1;
-      
-      // Iterate through the cleaned strings in pairs: even index is action, odd index is expected result
-      for (let i = 0; i < cleanParamStrings.length; i += 2) {
-        const action = cleanParamStrings[i] || '';
-        // If there is no expected result for the last action, use 'none'
-        const expectedRaw = cleanParamStrings[i + 1] || 'none';
-        // Use splitExpected to further process the expected result
-        const expected = splitExpected(expectedRaw);
-        
-        // Add the parsed step to the result list
-        result.steps.push({
-          step: stepNumber,
-          action: action,
-          expectedResult: expected
-        });
-        stepNumber++;
-      }
+    };
+
+    // Make direct REST API call to create comment thread
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${tokenResponse.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(threadPayload)
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
     }
+
+    const createdThread = await response.json() as any;
     
-    return result;
+    return {
+      id: createdThread.id,
+      publishedDate: createdThread.publishedDate,
+      lastUpdatedDate: createdThread.lastUpdatedDate,
+      comments: createdThread.comments,
+      status: createdThread.status,
+      threadContext: createdThread.threadContext
+    };
   } catch (error) {
-    throw new Error(`Authentication or API call failed: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`Failed to add PR inline comment: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
+
+/**
+ * Utility to get all comment threads for a pull request
+ */
+export async function getPRCommentThreads(
+  organization: string,
+  project: string,
+  repositoryId: string,
+  pullRequestId: number
+): Promise<PRCommentThread[]> {
+  try {
+    const credential = new DefaultAzureCredential();
+    const tokenResponse = await credential.getToken("https://app.vssps.visualstudio.com/.default");
+    
+    if (!tokenResponse) {
+      throw new Error("Failed to get access token");
+    }
+
+    // Construct the REST API URL for getting PR comment threads
+    const apiUrl = `https://dev.azure.com/${organization}/${project}/_apis/git/repositories/${repositoryId}/pullRequests/${pullRequestId}/threads?api-version=7.0`;
+    
+    // Make direct REST API call
+    const response = await fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${tokenResponse.token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const data = await response.json() as any;
+    const threads = data.value || [];
+    
+    return threads.map((thread: any) => ({
+      id: thread.id,
+      publishedDate: thread.publishedDate,
+      lastUpdatedDate: thread.lastUpdatedDate,
+      comments: thread.comments,
+      status: thread.status,
+      threadContext: thread.threadContext
+    }));
+  } catch (error) {
+    throw new Error(`Failed to get PR comment threads: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+

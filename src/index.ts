@@ -6,9 +6,8 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { MCATMCP } from "./mcp/mcatMcp.js";
-import { SnykMCP } from "./mcp/snykMcp.js";
-import { CreateATPMCP } from "./mcp/createATPMcp.js";
+import { PRFilesMCP } from "./mcp/prFilesMcp.js";
+import { PRCommentsMCP } from "./mcp/prCommentsMcp.js";
 
 /**
  * Main entry point for the S3D Dev MCP Server
@@ -17,7 +16,7 @@ async function main() {
   // Initialize MCP server
   const server = new McpServer(
     {
-      name: "s3d-dev-mcp",
+      name: "azdev_pr_mcp",
       version: "1.0.0",
     },
     {
@@ -29,14 +28,12 @@ async function main() {
   );
 
   // Register all functionality to the server
-  const mcatMcp = new MCATMCP(server);
-  mcatMcp.register();
 
-  const snykMcp = new SnykMCP(server);
-  snykMcp.register();
+  const prFilesMcp = new PRFilesMCP(server);
+  prFilesMcp.register();
 
-  const createATPMcp = new CreateATPMCP(server);
-  createATPMcp.register();
+  const prCommentsMcp = new PRCommentsMCP(server);
+  prCommentsMcp.register();
 
   // Set up stdio transport
   const transport = new StdioServerTransport();
@@ -45,7 +42,7 @@ async function main() {
   await server.connect(transport);
 
   // Log server start
-  console.info("S3D Dev MCP Server running on stdio");
+  console.info("AzureDevops PR MCP Server running on stdio");
 }
 
 // Handle shutdown gracefully

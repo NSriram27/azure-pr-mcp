@@ -110,7 +110,7 @@ To use the S3D Dev MCP Server with VS Code GitHub Copilot, add this configuratio
 
 ## 🛠️ Available Tools and Prompts
 
-The ALI Dev MCP Server provides several tools and prompts for development workflows:
+The S3D Dev MCP Server provides several tools and prompts for development workflows:
 
 ### MCAT MCP
 
@@ -125,6 +125,19 @@ The ALI Dev MCP Server provides several tools and prompts for development workfl
 
 - `write-new-mcat`: Generates new MCAT test based on Azure DevOps test case details.
 - `run-and-debug-mcat`: Run and debug MCAT tests using the specified test name.
+
+### PR Files MCP
+
+**Tools:**
+
+- `get_pr_latest_iteration`: Get the latest iteration ID for a pull request in Azure DevOps.
+- `get_pr_iteration_changes`: Get file changes for a specific iteration of a pull request.
+- `get_pr_file_changes`: Get file changes from the latest iteration of a pull request (main tool).
+
+**Prompts:**
+
+- `analyze-pr-changes`: Analyze file changes in a pull request and provide insights.
+- `review-pr-files`: Review specific files changed in a pull request with optional filtering.
 
 ### CreateATP MCP
 
@@ -143,6 +156,17 @@ Testcase can be provided in below ways:
 - `fix-snyk-issue-C++`: Fix Snyk issues in the C++ code.
 - `fix-snyk-issue-C#`: Fix Snyk issues in the C# code.
 - `fix-snyk-issue-C#-withUT`: Fix Snyk issues in the C# code with unit tests.
+
+## 💬 GitHub Copilot Chat Integration
+
+To use the S3D Dev MCP Server directly in GitHub Copilot Chat, see the detailed setup guide in [COPILOT-CHAT-SETUP.md](./COPILOT-CHAT-SETUP.md).
+
+**Quick Example Chat Commands:**
+```
+@copilot Use get_pr_file_changes tool for PR 55517 in project ppm, repository sprb
+@copilot Use analyze-pr-changes prompt for PR 55517 in project ppm, repository sprb  
+@copilot Use write-new-mcat prompt with testid 12345
+```
 
 ## 🔧 Troubleshooting
 
