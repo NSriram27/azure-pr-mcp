@@ -1,18 +1,12 @@
 <!-- © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved. -->
 
-# S3D Dev MCP Server
+# ALI Dev MCP Server (Development README)
 
 ## 📋 Project Overview
 
-The S3D Dev MCP Server is a development assistant that significantly **reduces development time** and **streamlines workflows** for S3D development teams. This Model Context Protocol (MCP) server integrates seamlessly with VS Code GitHub Copilot to provide automated assistance.
+This repository implements a small Model Context Protocol (MCP) server that exposes Azure DevOps pull-request related utilities over MCP. It provides tools and prompts for inspecting PR file changes and adding inline review comments using Azure DevOps REST APIs and the `@modelcontextprotocol/sdk`.
 
-### 🚀 **Key Benefits:**
-
-- **Accelerated Test Development**: Automatically generates MCAT tests from Azure DevOps test cases, reducing manual test creation time by up to 80%
-- **Streamlined Security Management**: Provides intelligent Snyk vulnerability fixes for C++ and C# codebases with context-aware solutions
-- **Automated Workflow Integration**: Seamlessly connects with Azure DevOps to fetch, update, and manage test automation details
-
-This server transforms complex, time-consuming development tasks into simple, automated workflows, allowing developers to focus on core business logic rather than boilerplate code and manual processes.
+This README is focused on the actual code in this repository (PR file analysis and PR commenting MCP providers) and removes references to unrelated providers.
 
 ## ⚡ Prerequisites
 
@@ -21,134 +15,127 @@ This server transforms complex, time-consuming development tasks into simple, au
 
 ## 🔧 Installation Steps
 
-1. Download Node.js from the official website: [https://nodejs.org/](https://nodejs.org/)
-2. Run the installer and follow the instructions.
-3. Verify installation:
+1. Install Node.js (>= 18). See https://nodejs.org/
+2. From the repository root, install dependencies:
 
-   ```bash
-   node -v
-   npm -v
+   ```powershell
+   npm install
+   ```
+
+3. Build the TypeScript sources (optional for dev runs using `tsx`):
+
+   ```powershell
+   npm run build
+   ```
+
+4. Run in dev mode (uses `tsx`):
+
+   ```powershell
+   npm run dev
    ```
 
 ## ⚙️ Azure DevOps Pipeline
 
-- The project includes an `azure-pipelines.yml` for CI/CD. It installs dependencies, builds the project, and can be extended for testing and deployment.
+This repository includes `azure-pipelines.yml` for CI. It currently runs install/build steps and can be extended to run tests.
 
 ## 📁 Project Structure
 
 ```
-s3d-dev-mcp/
+ali-dev-mcp/
 ├── src/
-│   ├── index.ts              # Main server entry point
-│   ├── mcp/
-│   │   ├── baseMcp.ts       # Base MCP class
-│   │   ├── mcatMcp.ts       # MCAT functionality
-│   │   └── snykMcp.ts       # Snyk functionality
-│   └── helper/
-│       └── azureHelper.ts   # Azure DevOps helper functions
+│   ├── index.ts              # Main server entry point (registers MCP providers)
+│   ├── helper/
+│   │   └── azureIdentity.ts    # Azure DevOps helper functions (REST calls)
+│   └── mcp/
+│       ├── baseMcp.ts        # Base MCP helper class
+│       ├── prFilesMcp.ts     # MCP provider: PR file changes and analysis
+│       └── prCommentsMcp.ts  # MCP provider: add inline PR comments and review prompts
 ├── test/
-│   └── azureHelper.test.ts  # Jest tests for Azure helper functions
-│   └── test-server.js       # Test server for MCP functionality
-├── jest.config.mjs           # Jest testing configuration
-├── azure-pipelines.yml      # CI/CD pipeline configuration
-├── README-DEV.md             # Development documentation
-├── package.json              # Project dependencies and scripts
-├── package-lock.json         # Dependency lock file
-├── tsconfig.json             # TypeScript configuration
-└── README.md                 # Main project documentation
+│   ├── azureIdentity.test.ts   # Jest tests for Azure helper functions
+│   └── test-server.js        # Simple test harness for the MCP server
+├── package.json
+├── tsconfig.json
+├── azure-pipelines.yml
+├── README-DEV.md             # This file
+└── README.md
 ```
 
-## 📦 Dependencies
+## 📦 Dependencies (from package.json)
 
 ### Production Dependencies
 
 - `@modelcontextprotocol/sdk` - MCP SDK for Node.js
-- `@azure/identity` - Azure authentication
-- `azure-devops-node-api` - Azure DevOps API
-- `jsdom` - HTML parsing for test case extraction
-- `node-fetch` - HTTP client for API requests
-- `zod` - Runtime type validation
+- `@azure/identity` - Azure authentication (DefaultAzureCredential used in helpers)
+- `azure-devops-node-api` - present as a dependency (helper currently uses direct REST calls but dependency kept for future use)
+- `node-fetch` - used for HTTP requests to Azure DevOps REST APIs
+- `zod` - runtime validation used in MCP tool/prompt schemas
 
 ### Development Dependencies
 
-- `typescript` - TypeScript compiler
-- `tsx` - TypeScript execution for development
-- `jest` - Testing framework
-- `@jest/globals` - Jest global functions
-- `@types/jest` - TypeScript types for Jest
-- `ts-jest` - TypeScript support for Jest
-- `@types/node` - Node.js TypeScript types
-- `@types/jsdom` - JSDOM TypeScript types
+- `typescript`, `tsx` - TypeScript build/run tools
+- `jest`, `ts-jest`, `@jest/globals` - testing framework
+- `@types/*` - TypeScript typings
+
+You can inspect `package.json` for exact versions.
 
 ## 💻 Development
 
 1. Clone the repository
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-3. Build:
-
-   ```bash
-   npm run build
-   ```
-4. Run in dev mode:
-
-   ```bash
-   npm run dev
-   ```
+2. Install dependencies: `npm install`
+3. Build: `npm run build`
+4. Run in dev mode: `npm run dev`
 
 ## 🧪 Testing
 
 ### Run Tests
 
 - **Jest Unit Tests**: `npm run test:jest`
-- **MCP Server Test**: `npm test`
+- **MCP Server Test harness**: `npm test` (runs `node test/test-server.js`)
 
 ### Test Files
 
-- `test/azureHelper.test.ts` - Unit tests for Azure DevOps helper functions
-- `test/test-server.js` - Integration test for the MCP server
+- `test/azureIdentity.test.ts` - Unit tests for `src/helper/azureIdentity.ts`
+- `test/test-server.js` - Simple MCP server test harness
 
-### Adding Tests
+## 🔌 Add a New MCP Provider
 
-When adding new helper functions, create corresponding test files in the `test/` directory following the naming convention `[sourceFile].test.ts`.
+To add a new MCP provider in this codebase:
 
-### 🔌 Add a New MCP Provider
+1. Create a new file in `src/mcp/`, e.g. `myProvider.ts`.
+2. Extend `BaseMCP` and implement `registerTools()` and `registerPrompts()`.
+3. Create and register an instance in `src/index.ts` (follow existing pattern for `PRFilesMCP` and `PRCommentsMCP`).
+4. Add tests under `test/` and run `npm test`.
 
-1. Create a new file in `src/mcp/` (e.g., `myMcp.ts`).
-2. Extend the `BaseMCP` class and implement `registerTools()` and `registerPrompts()`.
-3. Import and register your new MCP in `src/index.ts`.
-4. Run `npm test` to verify the new MCP provider is properly integrated and working.
+## 🛠️ Available MCP Providers, Tools and Prompts
 
-## 🛠️ Available Tools and Prompts
+This project currently exposes two MCP providers implemented in `src/mcp/`:
 
-### MCAT MCP
+- PRFilesMCP (`src/mcp/prFilesMcp.ts`)
+  - Tools:
+    - `get_pr_latest_iteration` — Get the latest iteration ID for a pull request
+    - `get_pr_iteration_changes` — Get file changes for a specific PR iteration
+    - `get_pr_file_changes` — Get file changes from the latest iteration (convenience)
+  - Prompts:
+    - `analyze-pr-changes` — Analyze changed files and give insights (types, patterns, impact)
+    - `review-pr-files` — Prompt to review specific files changed in a PR (optionally filter by pattern)
 
-**Tools:**
+- PRCommentsMCP (`src/mcp/prCommentsMcp.ts`)
+  - Tools:
+    - `add_pr_inline_comment` — Add an inline review comment to a file/line in a PR
+  - Prompts:
+    - `add-review-comment` — Helper prompt to craft and add a single inline review comment
+    - `review-pr-with-comments` — Comprehensive review prompt that can add multiple inline comments
 
-- `get_test_case`: Fetches a test case from Azure DevOps.
-- `get_automation_details`: Get automation details from an Azure DevOps work item.
-- `update_automation_details`: Update automation details in an Azure DevOps work item.
-- `clear_automation_details`: Clear automation details from an Azure DevOps work item.
-
-**Prompts:**
-
-- `write-new-mcat`: Generates new MCAT test based on Azure DevOps test case details.
-- `run-and-debug-mcat`: Run and debug MCAT tests using the specified test name.
-
-### Snyk MCP
-
-**Prompts:**
-
-- `fix-snyk-issue-C++`: Fix Snyk issues in the C++ code.
-- `fix-snyk-issue-C#`: Fix Snyk issues in the C# code.
-- `fix-snyk-issue-C#-withUT`: Fix Snyk issues in the C# code with unit tests.
+Note: The Azure DevOps helper (`src/helper/azureIdentity.ts`) implements the REST calls used by these tools (authentication via `@azure/identity` and requests via `fetch`).
 
 ## ⚙️ MCP Client Configuration
 
-For information on configuring this server with MCP clients (such as VS Code GitHub Copilot), see [MCP-CLIENT-CONFIG.md](MCP-CLIENT-CONFIG.md).
+For information on configuring MCP clients (e.g. VS Code integrations), follow the MCP SDK and client docs. This repo expects an MCP client that communicates over stdio by default (see `src/index.ts`).
+
+## Quality gates & notes
+
+- The README was updated to reflect the actual code present in the repository and to remove unrelated MCAT/Snyk content.
+- If you want me to add more documentation (examples of tool inputs/outputs, sample prompt payloads, or a quick start script), tell me which examples you'd like included.
 
 ## ©️ Copyright
 

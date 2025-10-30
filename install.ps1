@@ -1,5 +1,5 @@
 # ================================================
-# PowerShell Installation Script for azdev_prcodereview_mcp MCP Server
+# PowerShell Installation Script for ALI DEV MCP Server
 # Run this script as Administrator
 # ================================================
 
@@ -7,10 +7,10 @@ $ErrorActionPreference = "Continue"
 Clear-Host
 
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Azure DevOps PR Review MCP Server Installation  " -ForegroundColor Cyan
+Write-Host "  ALI DEV MCP Server Installation  " -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Installing Azure DevOps PR Review MCP Server..." -ForegroundColor Green
+Write-Host "Installing ALI DEV MCP Server..." -ForegroundColor Green
 Write-Host ""
 Write-Host "Press any key to start installation..." -ForegroundColor Yellow
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
@@ -44,7 +44,7 @@ try {
 # ------------------------------------------------
 # Create Installation Directory
 # ------------------------------------------------
-$installDir = "$env:USERPROFILE\.mcp\servers\azdev_prcodereview_mcp"
+$installDir = "$env:USERPROFILE\.mcp\servers\ALI_DEV_MCP_Server"
 $serversDir = "$env:USERPROFILE\.mcp\servers"
 
 New-Item -ItemType Directory -Path $serversDir -Force | Out-Null
@@ -136,13 +136,13 @@ $mcpConfigFile = "$mcpConfigDir\mcp.json"
 
 if (!(Test-Path $mcpConfigFile)) {
     New-Item -ItemType Directory -Path $mcpConfigDir -Force | Out-Null
-    $escapedPath = $installDir -replace '\\', '\\'
+    $escapedPath = $installDir 
     $config = @{
         servers = @{
-            "azdev_prcodereview_mcp" = @{
+            "ali-dev-mcp" = @{
                 type = "stdio"
                 command = "npx"
-                args = @("tsx", "$escapedPath\\src\\index.ts")
+                args = @("tsx", "$escapedPath\src\index.ts")
                 env = @{ NODE_ENV = "production" }
             }
         }
@@ -150,7 +150,7 @@ if (!(Test-Path $mcpConfigFile)) {
     $config | ConvertTo-Json -Depth 10 | Set-Content $mcpConfigFile
     Write-Host "MCP configuration created at: $mcpConfigFile"
 } else {
-    Write-Host "MCP configuration already exists. Please manually add the azdev_prcodereview_mcp server configuration."
+    Write-Host "MCP configuration already exists. Please manually add the ali-dev-mcp server configuration."
 }
 
 # ------------------------------------------------

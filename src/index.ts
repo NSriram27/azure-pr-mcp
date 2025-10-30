@@ -16,7 +16,7 @@ async function main() {
   // Initialize MCP server
   const server = new McpServer(
     {
-      name: "azdev_pr_mcp",
+      name: "ali-dev-mcp",
       version: "1.0.0",
     },
     {
@@ -42,7 +42,7 @@ async function main() {
   await server.connect(transport);
 
   // Log server start
-  console.info("AzureDevops PR MCP Server running on stdio");
+  console.info("ALI DEV MCP Server running on stdio");
 }
 
 // Handle shutdown gracefully

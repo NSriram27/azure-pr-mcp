@@ -1,6 +1,6 @@
 ---
 description: 'Comprehensive code review mode for analyzing code quality, security, performance, and best practices.'
-tools: ['ado/*', 'azdev_pr_mcp/*']
+tools: ['ado/*', 'ali-dev-mcp/*']
 ---
 
 ## Azure DevOps Pull Request Code Review AI Assistant

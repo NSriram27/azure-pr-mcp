@@ -1,9 +1,9 @@
 @echo off
 echo ========================================
-echo   azdev_prcodereview_mcp MCP Server Installation   
+echo   ALI DEV MCP Server Installation
 echo ========================================
 echo.
-echo This will install the azdev_prcodereview_mcp MCP Server
+echo This will install the ALI DEV MCP Server
 echo.
 pause
 

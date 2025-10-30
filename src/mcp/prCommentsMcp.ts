@@ -4,7 +4,7 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { BaseMCP } from "./baseMcp.js";
-import { addPRInlineComment, PRCommentThread } from "../helper/azureHelper.js";
+import { addPRInlineComment, PRCommentThread } from "../helper/azureIdentity.js";
 import { z } from "zod";
 
 /**

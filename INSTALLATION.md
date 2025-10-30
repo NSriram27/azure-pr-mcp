@@ -140,7 +140,7 @@ If you prefer manual installation, follow these steps:
          "s3d-dev-mcp": {
            "type": "stdio",
            "command": "npx",
-           "args": ["-y", "@ppm/azdev_pr_mcp"]
+           "args": ["-y", "@ppm/ali-dev-mcp"]
          }
        }
      }

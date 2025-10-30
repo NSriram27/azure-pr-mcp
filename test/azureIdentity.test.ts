@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeAll } from '@jest/globals';
-import { getAutomationDetailsFromWorkItem, AutomationDetails } from '../src/helper/azureHelper';
+import { getAutomationDetailsFromWorkItem, AutomationDetails } from '../src/helper/azureIdentity';
 
 // Note: These tests require proper Azure DevOps authentication and access
 // You may need to set up environment variables or mock the Azure DevOps client for CI/CD

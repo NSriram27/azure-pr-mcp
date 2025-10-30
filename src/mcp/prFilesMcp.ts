@@ -9,7 +9,7 @@ import {
   getPRIterationChanges,
   getPRFileChanges,
   PRIterationResult
-} from "../helper/azureHelper.js";
+} from "../helper/azureIdentity.js";
 import { z } from "zod";
 
 /**
