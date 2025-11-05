@@ -15,7 +15,7 @@
       "command": "npx",
       "args": [
         "tsx",
-        "C:\\Users\\vneeruko\\OneDrive - Hexagon\\Desktop\\Ali_Dev_Mcp_Server\\src\\index.ts"
+        "C:\\Users\\vneeruko\\OneDrive - Hexagon\\Desktop\\Ali_Dev_Mcp_Server\\Ali_Dev_Mcp_Server\\src\\index.ts"
       ],
       "env": {
         "NODE_ENV": "production"
