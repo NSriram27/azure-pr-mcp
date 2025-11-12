@@ -8,10 +8,10 @@ The ALI Dev MCP Server is a Model Context Protocol (MCP) server that provides Az
 
 **Key Capabilities:**
 
--  **PR File Analysis** - Inspect and analyze file changes in Azure DevOps pull requests
--  **Inline PR Comments** - Post automated review comments directly to PR files
--  **AI-Powered Reviews** - Leverage GitHub Copilot for intelligent code analysis
--  **Iteration Tracking** - Track and review changes across PR iterations
+- **PR File Analysis** - Inspect and analyze file changes in Azure DevOps pull requests
+- **Inline PR Comments** - Post automated review comments directly to PR files
+- **AI-Powered Reviews** - Leverage GitHub Copilot for intelligent code analysis
+- **Iteration Tracking** - Track and review changes across PR iterations
 
 ## ⚡ Prerequisites
 
@@ -75,6 +75,8 @@ The installer automatically configures the MCP server in VS Code. The configurat
 
 **Configuration file location:** `%APPDATA%\Code\User\mcp.json`
 
+**If you already have an existing `mcp.json` file**, the installer will prompt you to manually add the configuration. Add the following servers to your existing configuration:
+
 ```json
 {
   "servers": {
@@ -100,7 +102,10 @@ The installer automatically configures the MCP server in VS Code. The configurat
 }
 ```
 
-**Note:** The `ado` server configuration is included by default for convenience. This is the official Azure DevOps MCP server from Microsoft. For more information about this server, visit: https://github.com/microsoft/azure-devops-mcp
+**Note:** 
+- If you already have other MCP servers configured, merge the `ali-dev-mcp` and `ado` entries into your existing `servers` section
+- Add the `ado_org` input to your existing `inputs` array if you don't already have it
+- The `ado` server configuration is included by default for convenience. This is the official Azure DevOps MCP server from Microsoft. For more information, visit: https://github.com/microsoft/azure-devops-mcp
 
 ## 🛠️ Available Tools and Prompts
 
