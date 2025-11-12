@@ -1,36 +1,31 @@
 <!-- © 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved. -->
 
-# S3D Dev MCP Server - Client Configuration
+# ALI Dev MCP Server
 
 ## 📋 Overview
 
-The S3D Dev MCP Server is an intelligent development assistant that **reduces development time by up to 80%** through automated test generation, security vulnerability fixes, and seamless Azure DevOps integration. This Model Context Protocol server works with VS Code GitHub Copilot to transform complex development workflows into simple, automated processes.
+The ALI Dev MCP Server is a Model Context Protocol (MCP) server that provides Azure DevOps pull request utilities for AI-powered code reviews. It integrates with GitHub Copilot to enable automated PR analysis and inline code review comments directly in Azure DevOps.
 
 **Key Capabilities:**
 
-- 🚀 **Instant MCAT Test Generation** from Azure DevOps test cases
-- 🔒 **Automated Security Fixes** for C++ and C# vulnerabilities
-- 🔄 **Seamless Azure DevOps Integration** for workflow automation
-- 🧪 **Automated ATP Generation** from test case specifications
+-  **PR File Analysis** - Inspect and analyze file changes in Azure DevOps pull requests
+-  **Inline PR Comments** - Post automated review comments directly to PR files
+-  **AI-Powered Reviews** - Leverage GitHub Copilot for intelligent code analysis
+-  **Iteration Tracking** - Track and review changes across PR iterations
 
 ## ⚡ Prerequisites
 
-Before using the S3D Dev MCP Server, ensure you have:
+Before using the ALI Dev MCP Server, ensure you have:
 
 - **Node.js** version 18.0.0 or higher installed
-
   - Download from [nodejs.org](https://nodejs.org/)
   - Verify installation:
-
-    ```bash
+    ```powershell
     node --version
-    ```
-
-    ```bash
     npm --version
     ```
-- **Azure CLI** installed and configured:
 
+- **Azure CLI** installed and configured (recommended for Azure DevOps authentication):
   - Download from [Microsoft Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows)
   - For Windows: Download and run the MSI installer
   - Verify installation:
@@ -41,138 +36,197 @@ Before using the S3D Dev MCP Server, ensure you have:
     ```powershell
     az login
     ```
-  - Select the Visual Studio Subscription for which you have admin rights. Check you subscriptions [here](https://portal.azure.com/#view/Microsoft_Azure_Billing/SubscriptionsBladeV2).
-- **Snyk CLI** (optional - for users utilizing Snyk security features):
 
-  - For Windows: Download and run the installer or use npm:
-  - ```powershell
-    npm install -g snyk
-    ```
-  - Verify installation:
-    ```powershell
-    snyk --version
-    ```
-  - Authenticate with Snyk:
-    ```powershell
-    snyk auth
-    ```
-- **Registry configuration** - Follow these steps to configure the Azure DevOps registry:
-- 1. **Install vsts-npm-auth globally:**
+- **PowerShell** (for running the installation script on Windows)
 
-     ```powershell
-     npm install -g vsts-npm-auth
-     ```
-  2. **Create .npmrc file in your home directory:**
+## 🚀 Installation
 
-     **PowerShell:**
+For detailed installation instructions, see [INSTALLATION.md](./INSTALLATION.md).
 
-     ```powershell
-     echo "registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/" | Out-File -FilePath "$env:USERPROFILE\.npmrc" -Encoding utf8
-     echo "always-auth=true" | Out-File -FilePath "$env:USERPROFILE\.npmrc" -Append -Encoding utf8
-     ```
+### Quick Install
 
-     **Command Prompt (cmd):**
+1. **Download or clone this repository:**
+   ```powershell
+   git clone https://github.com/NSriram27/azure-pr-mcp.git
+   cd Ali_Dev_Mcp_Server
+   ```
 
-     ```cmd
-     echo registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/ > "%USERPROFILE%\.npmrc"
-     echo always-auth=true >> "%USERPROFILE%\.npmrc"
-     ```
+2. **Run the installer:**
+   ```cmd
+   installer.bat
+   ```
 
-     Or manually create the file at `%USERPROFILE%\.npmrc` with this content:
+3. **Authenticate with Azure DevOps:**
+   ```powershell
+   az login
+   ```
 
-     ```
-     registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/
-     always-auth=true
-     ```
-  3. **Configure VSTS authentication:**
+4. **Restart VS Code** to load the new MCP configuration
 
-     ```powershell
-     vsts-npm-auth -config .npmrc
-     ```
+The installer will:
+- ✅ Install the server to `%USERPROFILE%\.mcp\servers\ALI_DEV_MCP_Server`
+- ✅ Configure VS Code MCP settings
+- ✅ Install the PR Code Review chatmode
+- ✅ Set up all dependencies
 
-## 💻 VS Code GitHub Copilot
+## 💻 VS Code GitHub Copilot Configuration
 
-To use the S3D Dev MCP Server with VS Code GitHub Copilot, add this configuration to your MCP settings.
+The installer automatically configures the MCP server in VS Code. The configuration is added to:
 
-**Configuration file location:** `C:\Users\gmuthu\AppData\Roaming\Code\User\mcp.json`
+**Configuration file location:** `%APPDATA%\Code\User\mcp.json`
 
 ```json
 {
   "servers": {
-    "s3d-dev-mcp": {
+    "ado": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "@ppm/s3d-dev-mcp"]
+      "args": ["-y", "@azure-devops/mcp", "${input:ado_org}"]
+    },
+    "ali-dev-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["tsx", "%USERPROFILE%\\.mcp\\servers\\ALI_DEV_MCP_Server\\src\\index.ts"],
+      "env": { "NODE_ENV": "production" }
     }
-  }
+  },
+  "inputs": [
+    {
+      "id": "ado_org",
+      "type": "promptString",
+      "description": "Azure DevOps organization name (e.g. 'contoso')"
+    }
+  ]
 }
 ```
 
+**Note:** The `ado` server configuration is included by default for convenience. This is the official Azure DevOps MCP server from Microsoft. For more information about this server, visit: https://github.com/microsoft/azure-devops-mcp
+
 ## 🛠️ Available Tools and Prompts
 
-The S3D Dev MCP Server provides several tools and prompts for development workflows:
-
-### MCAT MCP
-
-**Tools:**
-
-- `get_test_case`: Fetches a test case from Azure DevOps.
-- `get_automation_details`: Get automation details from an Azure DevOps work item.
-- `update_automation_details`: Update automation details in an Azure DevOps work item.
-- `clear_automation_details`: Clear automation details from an Azure DevOps work item.
-
-**Prompts:**
-
-- `write-new-mcat`: Generates new MCAT test based on Azure DevOps test case details.
-- `run-and-debug-mcat`: Run and debug MCAT tests using the specified test name.
+The ALI Dev MCP Server provides two main MCP providers for Azure DevOps pull request workflows:
 
 ### PR Files MCP
 
 **Tools:**
 
-- `get_pr_latest_iteration`: Get the latest iteration ID for a pull request in Azure DevOps.
-- `get_pr_iteration_changes`: Get file changes for a specific iteration of a pull request.
-- `get_pr_file_changes`: Get file changes from the latest iteration of a pull request (main tool).
+- `get_pr_latest_iteration`: Get the latest iteration ID for a pull request in Azure DevOps
+- `get_pr_iteration_changes`: Get file changes for a specific iteration of a pull request
+- `get_pr_file_changes`: Get file changes from the latest iteration of a pull request (convenience tool)
 
 **Prompts:**
 
-- `analyze-pr-changes`: Analyze file changes in a pull request and provide insights.
-- `review-pr-files`: Review specific files changed in a pull request with optional filtering.
+- `analyze-pr-changes`: Analyze file changes in a pull request and provide insights (types, patterns, impact)
+- `review-pr-files`: Review specific files changed in a pull request with optional filtering by pattern
 
-### CreateATP MCP
+### PR Comments MCP
 
-**Prompts:**
+**Tools:**
 
-- `generate-atp-from-testcase`: Completes ATP generation workflow from test case.
-Testcase can be provided in below ways:
-  1.	Directly through prompt 
-  2.	By creating TestCase.txt file in the workspace
-
-
-### Snyk MCP
+- `add_pr_inline_comment`: Add an inline review comment to a specific file and line in a pull request
 
 **Prompts:**
 
-- `fix-snyk-issue-C++`: Fix Snyk issues in the C++ code.
-- `fix-snyk-issue-C#`: Fix Snyk issues in the C# code.
-- `fix-snyk-issue-C#-withUT`: Fix Snyk issues in the C# code with unit tests.
+- `add-review-comment`: Helper prompt to craft and add a single inline review comment
+- `review-pr-with-comments`: Comprehensive review prompt that can analyze PR changes and add multiple inline comments
 
 ## 💬 GitHub Copilot Chat Integration
 
-To use the S3D Dev MCP Server directly in GitHub Copilot Chat, see the detailed setup guide in [COPILOT-CHAT-SETUP.md](./COPILOT-CHAT-SETUP.md).
+The installer sets up a custom chatmode for PR code reviews:
+- **File:** `%APPDATA%\Code\User\prompts\PR Code Review.chatmode.md`
+- **Usage:** Select this chatmode in GitHub Copilot Chat to perform automated PR reviews with inline comments
 
-**Quick Example Chat Commands:**
+**Example Chat Commands:**
+
 ```
-@copilot Use get_pr_file_changes tool for PR 55517 in project ppm, repository sprb
-@copilot Use analyze-pr-changes prompt for PR 55517 in project ppm, repository sprb  
-@copilot Use write-new-mcat prompt with testid 12345
+@copilot Use get_pr_file_changes tool for PR 12345 in project MyProject, repository MyRepo
+@copilot Use analyze-pr-changes prompt for PR 12345 in project MyProject, repository MyRepo  
+@copilot Use review-pr-with-comments prompt for PR 12345 in project MyProject, repository MyRepo
 ```
 
 ## 🔧 Troubleshooting
 
-- Verify Node.js version compatibility (18.0.0 or higher)
-- Check that the server starts correctly by running `npx -y @ppm/s3d-dev-mcp --registry=https://pkgs.dev.azure.com/hexagonPPMInnerSource/_packaging/PPM/npm/registry/` in a terminal
-- If you encounter authentication issues, ensure you're logged in to Azure DevOps and have access to the PPM package feed
+### Installation Issues
+
+**"Node.js not found"**
+- Install Node.js 18.0.0+ from [nodejs.org](https://nodejs.org/)
+- Restart your terminal/command prompt after installation
+- Verify installation: `node --version`
+
+**"PowerShell execution error"**
+- The batch installer runs PowerShell with `-ExecutionPolicy Bypass`
+- If you encounter issues, run as Administrator
+- Alternatively, run PowerShell script directly:
+  ```powershell
+  Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+  .\install.ps1
+  ```
+
+**"Failed to install dependencies"**
+- Check your internet connection
+- Verify npm is working: `npm --version`
+- Try manual installation:
+  ```powershell
+  cd %USERPROFILE%\.mcp\servers\ALI_DEV_MCP_Server
+  npm install
+  ```
+
+### VS Code Integration Issues
+
+**"VS Code doesn't recognize MCP server"**
+- Verify `mcp.json` exists at `%APPDATA%\Code\User\mcp.json`
+- Check the file content matches the expected configuration
+- Restart VS Code completely (close all windows)
+- Check VS Code Output panel for MCP-related errors
+
+**"GitHub Copilot Chat doesn't show chatmode"**
+- Verify chatmode file exists at `%APPDATA%\Code\User\prompts\PR Code Review.chatmode.md`
+- Restart VS Code
+- Check that GitHub Copilot extension is installed and enabled
+
+### Azure DevOps Authentication Issues
+
+**"Authentication failed"**
+- Run `az login` to authenticate with Azure DevOps
+- Ensure you have access to the target Azure DevOps organization
+- Verify your Azure DevOps permissions for the target project/repository
+- Check that `@azure/identity` can access Azure credentials
+
+**"Cannot access pull request"**
+- Verify the project, repository, and PR ID are correct
+- Ensure you have read permissions for the repository
+- Check that the PR exists and is not deleted
+
+### Testing the Server
+
+To verify the server is working correctly:
+
+```powershell
+cd %USERPROFILE%\.mcp\servers\ALI_DEV_MCP_Server
+npx tsx src\index.ts
+```
+
+The server should start without errors. Press `Ctrl+C` to stop it.
+
+## 📚 Additional Resources
+
+- **Installation Guide:** [INSTALLATION.md](./INSTALLATION.md) - Detailed installation instructions
+- **Development Guide:** [README-DEV.md](./README-DEV.md) - For contributors and developers
+- **Model Context Protocol:** [MCP Documentation](https://modelcontextprotocol.io/)
+- **Azure DevOps API:** [REST API Reference](https://docs.microsoft.com/en-us/rest/api/azure/devops/)
+- **Azure DevOps MCP Server:** [Official Microsoft Server](https://github.com/microsoft/azure-devops-mcp)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please see [README-DEV.md](./README-DEV.md) for development setup and guidelines.
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Make your changes and add tests
+4. Run tests: `npm test`
+5. Commit your changes: `git commit -m "Add your feature"`
+6. Push to the branch: `git push origin feature/your-feature-name`
+7. Create a Pull Request
 
 ## ©️ Copyright
 
