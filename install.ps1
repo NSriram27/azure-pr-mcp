@@ -68,7 +68,7 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Copy Required Files
 # ------------------------------------------------
 Write-Host "Copying server files..."
-$filesToCopy = @("src", "package.json", "tsconfig.json", ".vscode")
+$filesToCopy = @("src", "package.json", "tsconfig.json")
 
 foreach ($item in $filesToCopy) {
     $source = Join-Path $scriptDir $item
@@ -129,16 +129,60 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 # ------------------------------------------------
-# Create MCP Configuration
+# Copy and Configure MCP Configuration
 # ------------------------------------------------
-$mcpConfigDir = "$env:APPDATA\Code\User"
-$mcpConfigFile = "$mcpConfigDir\mcp.json"
+Write-Host "Configuring MCP settings..."
 
-if (!(Test-Path $mcpConfigFile)) {
-    New-Item -ItemType Directory -Path $mcpConfigDir -Force | Out-Null
+# Source mcp.json from project
+$mcpSourceFile = "$scriptDir\.vscode\mcp.json"
+
+# Destination 1: VS Code global configuration
+$mcpGlobalConfigDir = "$env:APPDATA\Code\User"
+$mcpGlobalConfigFile = "$mcpGlobalConfigDir\mcp.json"
+
+# Destination 2: Installation directory .vscode folder
+$mcpLocalConfigDir = "$installDir\.vscode"
+$mcpLocalConfigFile = "$mcpLocalConfigDir\mcp.json"
+
+# Ensure directories exist
+New-Item -ItemType Directory -Path $mcpGlobalConfigDir -Force | Out-Null
+New-Item -ItemType Directory -Path $mcpLocalConfigDir -Force | Out-Null
+
+if (Test-Path $mcpSourceFile) {
+    # Read the source mcp.json file
+    $mcpContent = Get-Content $mcpSourceFile -Raw
+    
+    # Replace any hardcoded path with the installation directory path
+    # This handles paths like: C:\Users\vneeruko\OneDrive - Hexagon\Desktop\...\src\index.ts
+    $mcpContent = $mcpContent -replace '[A-Z]:\\[^"]+\\Ali_Dev_Mcp_Server\\src\\index\.ts', "$installDir\src\index.ts"
+    
+    # Also handle if a placeholder was used like {{INSTALL_PATH}}
+    $mcpContent = $mcpContent -replace '\{\{INSTALL_PATH\}\}', $installDir
+    
+    # Write to VS Code global configuration
+    $mcpContent | Set-Content $mcpGlobalConfigFile -Force
+    Write-Host "MCP configuration created at: $mcpGlobalConfigFile" -ForegroundColor Green
+    
+    # Write to installation directory .vscode folder
+    $mcpContent | Set-Content $mcpLocalConfigFile -Force
+    Write-Host "MCP configuration created at: $mcpLocalConfigFile" -ForegroundColor Green
+} else {
+    Write-Host "WARNING: Source mcp.json not found at $mcpSourceFile" -ForegroundColor Yellow
+    Write-Host "Creating default MCP configuration..." -ForegroundColor Yellow
+    
+    # Fallback: Create a basic configuration if source doesn't exist
     $escapedPath = $installDir 
     $config = @{
         servers = @{
+            "ado" = @{
+                type = "stdio"
+                command = "npx"
+                args = @(
+                    "-y",
+                    "@azure-devops/mcp",
+                    "`${input:ado_org}"
+                )
+            }
             "ali-dev-mcp" = @{
                 type = "stdio"
                 command = "npx"
@@ -146,11 +190,22 @@ if (!(Test-Path $mcpConfigFile)) {
                 env = @{ NODE_ENV = "production" }
             }
         }
+        inputs = @(
+            @{
+                id = "ado_org"
+                type = "promptString"
+                description = "Azure DevOps organization name (e.g. 'contoso')"
+            }
+        )
     }
-    $config | ConvertTo-Json -Depth 10 | Set-Content $mcpConfigFile
-    Write-Host "MCP configuration created at: $mcpConfigFile"
-} else {
-    Write-Host "MCP configuration already exists. Please manually add the ali-dev-mcp server configuration."
+    $configJson = $config | ConvertTo-Json -Depth 10
+    
+    # Write to both locations
+    $configJson | Set-Content $mcpGlobalConfigFile -Force
+    Write-Host "Default MCP configuration created at: $mcpGlobalConfigFile" -ForegroundColor Green
+    
+    $configJson | Set-Content $mcpLocalConfigFile -Force
+    Write-Host "Default MCP configuration created at: $mcpLocalConfigFile" -ForegroundColor Green
 }
 
 # ------------------------------------------------
@@ -168,7 +223,8 @@ Write-Host "3. Use the 'PR Code Review' chatmode for automated code reviews." -F
 Write-Host "4. Test the server using: npx tsx src\index.ts" -ForegroundColor White
 Write-Host ""
 Write-Host "Installation Directory: $installDir" -ForegroundColor Gray
-Write-Host "MCP Config: $mcpConfigFile" -ForegroundColor Gray
+Write-Host "MCP Config (Global): $mcpGlobalConfigFile" -ForegroundColor Gray
+Write-Host "MCP Config (Local): $mcpLocalConfigFile" -ForegroundColor Gray
 Write-Host "Chatmode File: $chatmodeDestFile" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Press any key to exit..." -ForegroundColor Yellow
