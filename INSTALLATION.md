@@ -26,29 +26,29 @@ The batch installer will automatically run the PowerShell script with the proper
 
 ### Automated Setup Process:
 
-1. ** Verifies Prerequisites**
+1. **Verifies Prerequisites**
    - Checks for Node.js installation
    - Verifies PowerShell availability
    - Validates system requirements
 
-2. ** Creates Installation Directory**
+2. **Creates Installation Directory**
    - Sets up `%USERPROFILE%\.mcp\servers\ALI_DEV_MCP_Server`
    - Copies project files (`src/`, `package.json`, `tsconfig.json`)
 
-3. ** Installs Dependencies**
+3. **Installs Dependencies**
    - Runs `npm install` in the installation directory
    - Installs all required packages from `package.json`
 
-4. ** Configures VS Code**
+4. **Configures VS Code**
    - Copies `.vscode/mcp.json` to `%APPDATA%\Code\User\mcp.json`
    - Updates hardcoded paths to point to the installation directory
    - **Note:** If `mcp.json` already exists, you'll need to manually merge the configuration
 
-5. ** Installs Chatmode**
+5. **Installs Chatmode**
    - Copies PR Code Review chatmode to `%APPDATA%\Code\User\prompts\`
    - Enables automated PR reviews in GitHub Copilot Chat
 
-6. ** Verifies Installation**
+6. **Verifies Installation**
    - Confirms all files are copied successfully
    - Displays installation summary and next steps
 
