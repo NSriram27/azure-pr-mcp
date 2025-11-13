@@ -4,7 +4,7 @@
 
 Easily install the ALI Dev MCP Server for VS Code:
 
-[![Install with NPX in VS Code](https://img.shields.io/badge/VS_Code-Install_ALI_Dev_MCP_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=azure-pr-mcp&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22azure-pr-mcp%22%5D%7D)
+[![Install with NPX in VS Code](https://img.shields.io/badge/VS_Code-Install_ALI_Dev_MCP_Server-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=ali-dev-mcp&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22azure-pr-mcp%22%5D%7D)
 
 This TypeScript project provides a local MCP server for Azure DevOps, enabling you to perform Azure DevOps pull request analysis and code review tasks directly from your code editor.
 
