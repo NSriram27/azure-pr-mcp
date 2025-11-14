@@ -53,7 +53,7 @@ For detailed installation instructions, see [INSTALLATION.md](./INSTALLATION.md)
 
 1. **Download or clone this repository:**
    ```powershell
-   git clone https://github.com/NSriram27/azure-pr-mcp.git
+   git clone https://github.com/NSriram27/ali-dev-mcp.git
    cd Ali_Dev_Mcp_Server
    ```
 
