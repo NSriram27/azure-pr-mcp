@@ -1,12 +1,12 @@
 {
-  "name": "@ppm/ali-dev-mcp",
+  "name": "azure-pr-mcp",
   "version": "1.0.0",
   "copyright": "© 2025, Hexagon AB and/or its subsidiaries and affiliates. All rights reserved.",
   "type": "module",
-  "description": "A Model Context Protocol server that provides development tools through a unified MCP interface, for S3D development works. (MCAT, Snyk, Unit Test, etc.)",
+  "description": "A Model Context Protocol server for Azure DevOps pull request analysis and code review. Enables AI-powered PR reviews with automated inline comments through GitHub Copilot.",
   "main": "dist/index.js",
   "bin": {
-    "ali-dev-mcp": "dist/index.js"
+    "azure-pr-mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
@@ -20,24 +20,32 @@
     "mcp",
     "model-context-protocol",
     "azure-devops",
-    "snyk",
-    "development-tools",
-    "mcat"
+    "pull-request",
+    "code-review",
+    "github-copilot",
+    "pr-analysis",
+    "inline-comments"
   ],
-  "author": "S3D Development Team",
+  "author": "NSriram27",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NSriram27/azure-pr-mcp.git"
+  },
+  "homepage": "https://github.com/NSriram27/azure-pr-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/NSriram27/azure-pr-mcp/issues"
+  },
   "dependencies": {
     "@azure/identity": "^4.0.1",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "azure-devops-node-api": "^14.0.2",
-    "jsdom": "^25.0.1",
     "node-fetch": "^3.3.2",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@jest/globals": "^30.0.5",
     "@types/jest": "^30.0.0",
-    "@types/jsdom": "^21.1.7",
     "@types/node": "^22.17.1",
     "jest": "^30.0.5",
     "ts-jest": "^29.4.1",
@@ -49,6 +57,7 @@
   },
   "files": [
     "dist/**/*",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ]
 }
